@@ -1,11 +1,12 @@
 #pragma once
-#include <opencv2/opencv.hpp>
 #include <Windows.h>
 #include <iostream>
+#include <opencv2/opencv.hpp>
 #include <opencv2/core/ocl.hpp>
 
 using namespace std;
 using namespace cv;
+
 
 class WindowsCapture
 {
@@ -18,16 +19,16 @@ private:
 	int mWidth;
 	int mSourceHeight;
 	int mSourceWidth;
+	float mScale;
 	HBITMAP mHbwindow;
 	BITMAPINFOHEADER mBitmap;
 	Mat mImage;
 
-public:
-
-	WindowsCapture(float scale = 1)
+	WindowsCapture(float scale)
 	{
 		ocl::setUseOpenCL(true);
 
+		mScale = scale;
 		mHwnd = GetDesktopWindow();
 		mHwindowDC = GetDC(mHwnd);
 		mHwindowCompatibleDC = CreateCompatibleDC(mHwindowDC);
@@ -38,8 +39,8 @@ public:
 
 		mSourceHeight = windowsize.bottom;
 		mSourceWidth = windowsize.right;
-		mHeight = (int)(windowsize.bottom * scale);
-		mWidth = (int)(windowsize.right * scale);
+		mHeight = (int)(windowsize.bottom * mScale);
+		mWidth = (int)(windowsize.right * mScale);
 
 		mImage.create(mHeight, mWidth, CV_8UC4);
 
@@ -67,34 +68,32 @@ public:
 		ReleaseDC(mHwnd, mHwindowDC);
 	};
 
+public:
+
 	Mat& Read()
 	{
-		// copy from the window device context to the bitmap device context
 		StretchBlt(mHwindowCompatibleDC, 0, 0, mWidth, mHeight, mHwindowDC, 0, 0, mSourceWidth, mSourceHeight, SRCCOPY); //change SRCCOPY to NOTSRCCOPY for wacky colors !
 		GetDIBits(mHwindowCompatibleDC, mHbwindow, 0, mHeight, mImage.data, (BITMAPINFO*)&mBitmap, DIB_RGB_COLORS);  //copy from mHwindowCompatibleDC to mHbwindow
 
 		return mImage;
 	};
 
-	//void Main()
-	//{
-	//	ocl::setUseOpenCL(true);
 
-	//	for (int count = 0;; count++)
-	//	{
-	//		Read();
+private:
+	static WindowsCapture* sInstance;
 
-	//		namedWindow("Desktop Capture", WINDOW_NORMAL);
-	//		resizeWindow("Desktop Capture", 1440, 810);
-	//		imshow("Desktop Capture", mImage);
+public:
+	static WindowsCapture* Instance(float scale = 1)
+	{
+		if (sInstance == nullptr)
+			sInstance = new WindowsCapture(scale);
 
-	//		if (waitKey(1) >= 0)
-	//			break;
+		return sInstance;
+	}
 
-	//		cout << count << "\n";
-	//	}
-	//}
-
-
-
+	void Release()
+	{
+		delete sInstance;
+		sInstance = nullptr;
+	}
 };

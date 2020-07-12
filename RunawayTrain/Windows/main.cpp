@@ -1,4 +1,4 @@
-#define TEST 1
+#define TEST 0
 
 
 #if !TEST
@@ -11,8 +11,6 @@ int main(void)
 {
 	LineTracer lineTracer;
 	lineTracer.Main();
-
-
 
 	return 0;
 }
@@ -31,13 +29,13 @@ using namespace cv;
 
 int main(void)
 {
-	WindowsCapture windowsCapture(0.5);
+	WindowsCapture* windowsCapture = WindowsCapture::Instance(0.5);
 	Mat original;
 	Mat result;
 
-	for (int frame = 0;; ++frame)
+	for (int frame = 0;; frame++)
 	{
-		original = windowsCapture.Read();
+		original = windowsCapture->Read();
 
 		result = original;
 		//cvtColor(original, result, COLOR_BGR2GRAY);

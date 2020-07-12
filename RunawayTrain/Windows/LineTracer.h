@@ -4,7 +4,7 @@
 #include <chrono>
 #include <ctime>
 #include <windows.h>
-#pragma comment(lib,"Winmm.lib")
+#pragma comment(lib, "Winmm.lib")
 
 using namespace std;
 using namespace cv;
@@ -18,10 +18,10 @@ public:
 	int LeftLanePos, RightLanePos, frameCenter, laneCenter, Result;
 	bool Exit;
 	vector<Vec4i> lines;
+	vector<Vec2f> liness;
 	Vec4i L;
 
 	stringstream ss;
-
 
 	vector<int> histrogramLane;
 
@@ -29,6 +29,7 @@ public:
 	float xpos2 = 1520;
 	float ypos1 = 720;
 	float ypos2 = 820;
+	int fps = 0;
 
 	Point2f Source[4] = { {xpos1,ypos1}, {xpos2,ypos1}, {xpos1 - 300,ypos2}, {xpos2 + 300,ypos2} };
 	Point2f Destination[4] = { Point2f(0,0) ,Point2f(400,0) ,Point2f(0,240) , Point2f(400,240) };
@@ -37,7 +38,6 @@ public:
 	{
 		cap.read(frame);
 		cap.read(frame);
-
 
 		if (frame.empty()) {
 			cerr << "END of video\n";
@@ -55,7 +55,7 @@ public:
 		line(frame, Source[3], Source[2], Scalar(0, 0, 255), 2);
 		line(frame, Source[2], Source[0], Scalar(0, 0, 255), 2);
 	}
-	vector<Vec2f> liness;
+
 	void Threshold()
 	{
 		cvtColor(framePers, frameRendered, COLOR_RGB2GRAY);
@@ -67,7 +67,6 @@ public:
 		threshold(frameRendered, frameRendered, 127, 255, THRESH_BINARY);
 
 		imshow("frameBinary", frameRendered);
-
 
 		frameFinal = frameRendered;
 
@@ -91,6 +90,7 @@ public:
 
 		HoughLines(frameEdge, liness, 5, 5 * CV_PI / 180, 100, 0, 0);
 		cvtColor(frameEdge, frameEdge, COLOR_GRAY2BGR);
+		imshow("frameEdge", frameEdge);
 
 		for (size_t i = 0; i < liness.size(); i++)
 		{
@@ -105,7 +105,7 @@ public:
 			line(frameEdge, pt1, pt2, Scalar(0, 0, 255), 3, LINE_AA);
 		}
 
-		imshow("frameEdge", frameEdge);
+		imshow("HoughLines", frameEdge);
 
 		cvtColor(frameFinal, frameFinal, COLOR_GRAY2RGB);
 		cvtColor(frameFinal, frameFinalDuplicate, COLOR_RGB2BGR);   //used in histrogram function only
@@ -164,9 +164,9 @@ public:
 
 	int Main()
 	{
-		VideoCapture cap("roadtest3.mp4");
+		VideoCapture cap("assets/video/roadtest3.mp4");
 		string ResultStr;
-		PlaySound(TEXT("laugh0.wav"), NULL, SND_ASYNC);
+		PlaySound(TEXT("assets/audio/laugh0.wav"), NULL, SND_ASYNC);
 
 		while (1)
 		{

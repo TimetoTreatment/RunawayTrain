@@ -48,6 +48,9 @@
     <ClCompile Include="WindowsCapture.cpp">
       <Filter>보조 클래스</Filter>
     </ClCompile>
+    <ClCompile Include="VideoCapture.cpp">
+      <Filter>보조 클래스</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -81,6 +84,9 @@
       <Filter>주 클래스</Filter>
     </ClInclude>
     <ClInclude Include="WindowsCapture.h">
+      <Filter>보조 클래스</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoCapture.h">
       <Filter>보조 클래스</Filter>
     </ClInclude>
   </ItemGroup>

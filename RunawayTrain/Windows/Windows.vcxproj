@@ -156,6 +156,7 @@
     <ClCompile Include="Region.cpp" />
     <ClCompile Include="Status.cpp" />
     <ClCompile Include="TrafficLight.cpp" />
+    <ClCompile Include="VideoCapture.cpp" />
     <ClCompile Include="WindowsCapture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +170,7 @@
     <ClInclude Include="Region.h" />
     <ClInclude Include="Status.h" />
     <ClInclude Include="TrafficLight.h" />
+    <ClInclude Include="VideoCapture.h" />
     <ClInclude Include="WindowsCapture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
