@@ -154,6 +154,7 @@
     <ClCompile Include="RegionOfInterest.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TrafficLight.cpp" />
+    <ClCompile Include="WebcamAndShapeDetection.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

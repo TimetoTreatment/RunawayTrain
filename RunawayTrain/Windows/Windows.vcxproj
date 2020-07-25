@@ -169,9 +169,11 @@
     <ClInclude Include="Motor.h" />
     <ClInclude Include="Region.h" />
     <ClInclude Include="Status.h" />
+    <ClInclude Include="TemplateMatching.h" />
     <ClInclude Include="TrafficLight.h" />
     <ClInclude Include="VideoCapture.h" />
     <ClInclude Include="WindowsCapture.h" />
+    <ClInclude Include="Light.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

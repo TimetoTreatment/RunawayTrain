@@ -10,6 +10,9 @@
     <Filter Include="기타">
       <UniqueIdentifier>{ea52cc0c-b7dd-41e5-88cf-d478f0d8d111}</UniqueIdentifier>
     </Filter>
+    <Filter Include="테스트">
+      <UniqueIdentifier>{5c6b7dd0-1fcc-4e33-a1e1-617fe17a08cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp">
@@ -88,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="VideoCapture.h">
       <Filter>보조 클래스</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>테스트</Filter>
+    </ClInclude>
+    <ClInclude Include="TemplateMatching.h">
+      <Filter>테스트</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
