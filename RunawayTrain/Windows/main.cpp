@@ -1,9 +1,10 @@
-#define TEMPLATEMATCHING
+#define MOTOR
 // TEMP
 // LINETRACER
 // WINDOWSCAPTURE
 // LIGHT
 // TEMPLATEMATCHING
+// MOTOR
 
 #ifdef TEMP
 #include "opencv2/opencv.hpp"
@@ -141,6 +142,19 @@ int main(void)
 	TemplateMatching* templateMatching = new TemplateMatching;
 
 	templateMatching->Main();
+
+	return 0;
+}
+
+#endif
+
+
+#ifdef MOTOR
+#include "Motor.h"
+
+int main(void)
+{
+	Motor Motor.Main();
 
 	return 0;
 }
