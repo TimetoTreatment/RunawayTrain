@@ -20,8 +20,8 @@ private:
 
 
 
-	const int mMotorLeft0 = 22;
-	const int mMotorLeft1 = 23;
+	const int mMotorLeft0 = 27;
+	const int mMotorLeft1 = 28;
 	const int mMotorRight0 = 24;
 	const int mMotorRight1 = 25;
 
@@ -41,10 +41,20 @@ public:
 	Motor()
 	{
 		wiringPiSetup();
+
 		pinMode(mMotorLeft0, OUTPUT);
 		pinMode(mMotorLeft1, OUTPUT);
 		pinMode(mMotorRight0, OUTPUT);
 		pinMode(mMotorRight1, OUTPUT);
+
+		digitalWrite(mMotorLeft0, LOW);
+		digitalWrite(mMotorLeft1, LOW);
+	}
+
+	~Motor()
+	{
+		digitalWrite(mMotorLeft0, LOW);
+		digitalWrite(mMotorLeft1, LOW);
 	}
 
 	void Control(Control control)
@@ -60,10 +70,12 @@ public:
 			digitalWrite(mMotorLeft0, LOW);
 			digitalWrite(mMotorLeft1, HIGH);
 			break;
+
 		case Control::LeftStop:
 			digitalWrite(mMotorLeft0, LOW);
 			digitalWrite(mMotorLeft1, LOW);
 			break;
+
 		case Control::RightCorotation:
 			digitalWrite(mMotorRight0, HIGH);
 			digitalWrite(mMotorRight1, LOW);
@@ -93,6 +105,9 @@ int main(void)
 	for (;;)
 	{
 		cin >> input;
+
+		if (input == "exit")
+			break;
 
 		if (input == "leftcorotation")
 			motor.Control(Control::LeftCorotation);
