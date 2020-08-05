@@ -2,10 +2,10 @@
 
 enum class MotorControl
 {
-	LeftCorotation,
-	LeftReversal,
+	LeftForward,
+	LeftReverse,
 	LeftStop,
-	RightCorotation,
-	RightReversal,
+	RightForward,
+	RightReverse,
 	RightStop,
 };

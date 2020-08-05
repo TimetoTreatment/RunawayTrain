@@ -65,7 +65,6 @@
     </RemotePostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="blink.cpp" />
     <ClCompile Include="LineTracer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Motor.h" />

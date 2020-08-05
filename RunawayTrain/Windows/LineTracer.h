@@ -14,42 +14,40 @@ public:
 	Mat ROILane;
 	int LeftLanePos, RightLanePos, frameCenter, laneCenter, Result;
 	bool Exit;
-	vector<Vec4i> lines;
-	vector<Vec2f> liness;
+	vector<Vec2f> lines;
 	Vec4i L;
 
 	stringstream ss;
 
 	vector<int> histrogramLane;
 
-	float xpos1 = 400;
-	float xpos2 = 1520;
-	float ypos1 = 720;
-	float ypos2 = 820;
-	int fps = 0;
+	float mXMarginTop = 267;
+	float mXMarginBottom = 66;
+	float mYPos = 480;
+	float mYSize = 66;
 
-	Point2f Source[4] = { {xpos1,ypos1}, {xpos2,ypos1}, {xpos1 - 300,ypos2}, {xpos2 + 300,ypos2} };
-	Point2f Destination[4] = { Point2f(0,0) ,Point2f(400,0) ,Point2f(0,240) , Point2f(400,240) };
+	Point2f ROI[4] = {
+		{mXMarginTop,mYPos}, {1280 - mXMarginTop,mYPos},
+		{mXMarginBottom,mYPos + mYSize}, {1280 - mXMarginBottom,mYPos + mYSize}
+	};
+
+	Point2f Destination[4] = { Point2f(0,0) ,Point2f(400,0) ,Point2f(0,225) , Point2f(400,225) };
 
 	void Capture(VideoCapture& cap)
 	{
 		cap.read(frame);
-
-		if (frame.empty()) {
-			cerr << "END of video\n";
-			exit(0);
-		}
+		resize(frame, frame, { 1280, 720 });
 	}
 
 	void Perspective()
 	{
-		Matrix = getPerspectiveTransform(Source, Destination);
-		warpPerspective(frame, framePers, Matrix, Size(400, 240));
+		Matrix = getPerspectiveTransform(ROI, Destination);
+		warpPerspective(frame, framePers, Matrix, Size(400, 225));
 
-		line(frame, Source[0], Source[1], Scalar(0, 0, 255), 2);
-		line(frame, Source[1], Source[3], Scalar(0, 0, 255), 2);
-		line(frame, Source[3], Source[2], Scalar(0, 0, 255), 2);
-		line(frame, Source[2], Source[0], Scalar(0, 0, 255), 2);
+		line(frame, ROI[0], ROI[1], Scalar(0, 0, 255), 2);
+		line(frame, ROI[1], ROI[3], Scalar(0, 0, 255), 2);
+		line(frame, ROI[3], ROI[2], Scalar(0, 0, 255), 2);
+		line(frame, ROI[2], ROI[0], Scalar(0, 0, 255), 2);
 	}
 
 	void Threshold()
@@ -72,7 +70,7 @@ public:
 		//}
 
 		/* 2¹ø */
-		HoughLines(frameEdge, liness, 1, 1 * CV_PI / 180, 100);
+		HoughLines(frameEdge, lines, 1, 1 * CV_PI / 180, 100);
 		cvtColor(frameEdge, frameEdge, COLOR_GRAY2BGR);
 		imshow("frameEdge", frameEdge);
 
@@ -81,9 +79,9 @@ public:
 		double a, b;
 		double x0, y0;
 
-		for (size_t i = 0; i < liness.size(); i++)
+		for (size_t i = 0; i < lines.size(); i++)
 		{
-			rho = liness[i][0], theta = liness[i][1];
+			rho = lines[i][0], theta = lines[i][1];
 			a = cos(theta);
 			b = sin(theta);
 			x0 = a * rho;
@@ -111,7 +109,7 @@ public:
 
 		for (int i = 0; i < width; i++)
 		{
-			ROILane = frameFinalDuplicate(Rect(i, 140, 1, 100));
+			ROILane = frameFinalDuplicate(Rect(i, 125, 1, 100));
 			divide(255, ROILane, ROILane);
 			histrogramLane.push_back((int)(sum(ROILane)[0]));
 		}
@@ -137,8 +135,8 @@ public:
 		LeftLanePos = distance(histrogramLane.begin(), LeftPtr);
 		RightLanePos = distance(histrogramLane.begin(), RightPtr);
 
-		line(frameFinal, Point2f(LeftLanePos, 0), Point2f(LeftLanePos, 240), Scalar(0, 255, 0), 2);
-		line(frameFinal, Point2f(RightLanePos, 0), Point2f(RightLanePos, 240), Scalar(0, 255, 0), 2);
+		line(frameFinal, Point2f(LeftLanePos, 0), Point2f(LeftLanePos, 225), Scalar(0, 255, 0), 2);
+		line(frameFinal, Point2f(RightLanePos, 0), Point2f(RightLanePos, 225), Scalar(0, 255, 0), 2);
 	}
 
 	void LaneCenter()
@@ -146,8 +144,8 @@ public:
 		laneCenter = (RightLanePos - LeftLanePos) / 2 + LeftLanePos;
 		frameCenter = 199;
 
-		line(frameFinal, Point2f(laneCenter, 180), Point2f(laneCenter, 240), Scalar(0, 0, 255), 3);
-		line(frameFinal, Point2f(frameCenter, 0), Point2f(frameCenter, 240), Scalar(255, 0, 0), 3);
+		line(frameFinal, Point2f(laneCenter, 180), Point2f(laneCenter, 225), Scalar(0, 0, 255), 3);
+		line(frameFinal, Point2f(frameCenter, 0), Point2f(frameCenter, 225), Scalar(255, 0, 0), 3);
 
 		Result = laneCenter - frameCenter;
 	}
@@ -157,7 +155,6 @@ public:
 	{
 		VideoCapture cap("assets/video/roadtest3.mp4");
 		string ResultStr;
-		//PlaySound(TEXT("assets/audio/laugh0.wav"), NULL, SND_ASYNC);
 
 		while (1)
 		{
@@ -184,28 +181,21 @@ public:
 
 			putText(frame, ss.str(), Point2f(50, 100), 0, 2, Scalar(0, 0, 255), 2);
 
-			namedWindow("orignal", WINDOW_KEEPRATIO);
-			moveWindow("orignal", 0, 100);
-			resizeWindow("orignal", 640, 360);
+			namedWindow("orignal", WINDOW_NORMAL);
 			imshow("orignal", frame);
 
-			namedWindow("Perspective", WINDOW_KEEPRATIO);
-			moveWindow("Perspective", 640, 100);
-			resizeWindow("Perspective", 640, 360);
+			namedWindow("Perspective", WINDOW_NORMAL);
 			imshow("Perspective", framePers);
 
-			namedWindow("Final", WINDOW_KEEPRATIO);
-			moveWindow("Final", 1280, 100);
-			resizeWindow("Final", 640, 360);
+			namedWindow("Final", WINDOW_NORMAL);
 			imshow("Final", frameFinal);
 
 			waitKey(1);
-			auto end = std::chrono::system_clock::now();
-			std::chrono::duration<double> elapsed_seconds = end - start;
 
-			float t = elapsed_seconds.count();
-			int FPS = 1 / t;
-			cout << "FPS = " << FPS << '\n' << ResultStr << '\n' << "lineNum : " << liness.size() << endl;
+			std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start;
+
+			int FPS = 1 / elapsed_seconds.count();
+			cout << "FPS = " << FPS << '\n' << ResultStr << '\n' << "lineNum : " << lines.size() << endl;
 		}
 
 		return 0;

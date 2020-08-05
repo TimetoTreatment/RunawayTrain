@@ -23,14 +23,6 @@ private:
 
 public:
 
-	/*
-		0     1     |  Output
-		-------------------------
-		High  Low   |  Corotation
-		Low   High  |  Reversal
-		Low   Low   |  Stop
-	*/
-
 	Motor()
 	{
 		wiringPiSetup();
@@ -56,16 +48,24 @@ public:
 		digitalWrite(mRight1, LOW);
 	}
 
-	void MotorControl(MotorControl leg)
+	/*
+		0     1     |  Output
+		-------------------------
+		High  Low   |  Corotation
+		Low   High  |  Reversal
+		Low   Low   |  Stop
+	*/
+
+	void Control(MotorControl motorControl)
 	{
-		switch (leg)
+		switch (motorControl)
 		{
-		case MotorControl::LeftCorotation:
+		case MotorControl::LeftForward:
 			digitalWrite(mLeft0, HIGH);
 			digitalWrite(mLeft1, LOW);
 			break;
 
-		case MotorControl::LeftReversal:
+		case MotorControl::LeftReverse:
 			digitalWrite(mLeft0, LOW);
 			digitalWrite(mLeft1, HIGH);
 			break;
@@ -75,12 +75,12 @@ public:
 			digitalWrite(mLeft1, LOW);
 			break;
 
-		case MotorControl::RightCorotation:
+		case MotorControl::RightForward:
 			digitalWrite(mRight0, HIGH);
 			digitalWrite(mRight1, LOW);
 			break;
 
-		case MotorControl::RightReversal:
+		case MotorControl::RightReverse:
 			digitalWrite(mRight0, LOW);
 			digitalWrite(mRight1, HIGH);
 			break;
@@ -92,49 +92,59 @@ public:
 		}
 	}
 
-	void MotorSpeed(char leg, int speedPercentage)
-	{
 
+	void Speed(char side, int percentage)
+	{
+		if (side == 'L')
+			softPwmWrite(mLeftPwm, percentage);
+
+		else if (side == 'R')
+			softPwmWrite(mRightPwm, percentage);
+
+		else
+		{
+			cout << "Error | Motor::MotorSpeed()" << endl;
+			exit(-1);
+		}
 	}
 
-	void Main()
+
+	void Test()
 	{
-		string input;
+		int speed;
+		string userControl;
 
-		MotorControl(MotorControl::RightCorotation);
-		MotorControl(MotorControl::LeftCorotation);
-
-		for (int speed;;)
+		for (;;)
 		{
-			cin >> input;
+			cin >> userControl;
 
-			if (input == "exit")
+			if (userControl == "exit")
 				break;
 
-			else if (input == "leftspeed")
+			else if (userControl == "leftspeed")
 			{
 				cin >> speed;
-				softPwmWrite(mLeftPwm, speed);
+				Speed('l', speed);
 			}
 
-			else if (input == "rightspeed")
+			else if (userControl == "rightspeed")
 			{
 				cin >> speed;
-				softPwmWrite(mRightPwm, speed);
+				Speed('r', speed);
 			}
 
-			if (input == "leftcorotation")
-				MotorControl(MotorControl::LeftCorotation);
-			else if (input == "leftreversal")
-				MotorControl(MotorControl::LeftReversal);
-			else if (input == "leftstop")
-				MotorControl(MotorControl::LeftStop);
-			else if (input == "rightcorotation")
-				MotorControl(MotorControl::RightCorotation);
-			else if (input == "rightreversal")
-				MotorControl(MotorControl::RightReversal);
-			else if (input == "rightstop")
-				MotorControl(MotorControl::RightStop);
+			else if (userControl == "lf" || userControl == "leftforward")
+				Control(MotorControl::LeftForward);
+			else if (userControl == "lr" || userControl == "leftreverse")
+				Control(MotorControl::LeftReverse);
+			else if (userControl == "ls" || userControl == "leftstop")
+				Control(MotorControl::LeftStop);
+			else if (userControl == "rf" || userControl == "rightforward")
+				Control(MotorControl::RightForward);
+			else if (userControl == "rr" || userControl == "rightreverse")
+				Control(MotorControl::RightReverse);
+			else if (userControl == "rs" || userControl == "rightstop")
+				Control(MotorControl::RightStop);
 		}
 	}
 };
