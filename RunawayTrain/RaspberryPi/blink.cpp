@@ -1,12 +1,9 @@
 //#include <wiringPi.h>
+//#include <softPwm.h>
 //#include <iostream>
 //
-//#define	LED	25
+//#define	LED	26
 //using namespace std;
-//
-//
-//
-//
 //
 //int main(void)
 //{

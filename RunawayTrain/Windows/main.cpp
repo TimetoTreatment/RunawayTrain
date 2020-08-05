@@ -1,4 +1,4 @@
-#define MOTOR
+#define TEMP
 // TEMP
 // LINETRACER
 // WINDOWSCAPTURE
@@ -67,6 +67,7 @@ int main(int argc, char** argv)
 
 #endif
 
+
 #ifdef LINETRACER
 #include <opencv2/opencv.hpp>
 #include "LineTracer.h"
@@ -118,6 +119,7 @@ int main(void)
 }
 
 #endif
+
 
 #ifdef LIGHT
 #include "Light.h"

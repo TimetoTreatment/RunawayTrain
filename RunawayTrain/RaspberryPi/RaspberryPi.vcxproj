@@ -49,6 +49,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Link>
       <LibraryDependencies>wiringPi</LibraryDependencies>
+      <AdditionalOptions>`pkg-config --cflags --libs opencv4` %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <RemotePostBuildEvent>
       <Command>
@@ -56,10 +57,13 @@
       <Message>
       </Message>
     </RemotePostBuildEvent>
+    <ClCompile>
+      <AdditionalOptions>`pkg-config --cflags --libs opencv4` %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <Link>
-      <LibraryDependencies>wiringPi</LibraryDependencies>
+      <LibraryDependencies>wiringPi;opencv_core;opencv_highgui;opencv_imgproc;opencv_imgcodecs;opencv_video;opencv_videoio</LibraryDependencies>
     </Link>
     <RemotePostBuildEvent>
       <Command>
@@ -70,11 +74,33 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="blink.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Motor.cpp" />
+    <ClCompile Include="opencv.cpp" />
+    <ClCompile Include="pwm.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LineTracer.cpp" />
   </ItemGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <Link>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <SharedLibrarySearchPath>%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
+    </Link>
+    <ClCompile />
+    <ClCompile />
+    <RemotePreBuildEvent>
+      <Command>
+      </Command>
+    </RemotePreBuildEvent>
+    <RemotePreLinkEvent>
+      <Command>
+      </Command>
+    </RemotePreLinkEvent>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

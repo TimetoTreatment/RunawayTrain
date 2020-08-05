@@ -1,10 +1,6 @@
 #pragma once
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <chrono>
-#include <ctime>
-#include <windows.h>
-#pragma comment(lib, "Winmm.lib")
 
 using namespace std;
 using namespace cv;
@@ -161,7 +157,7 @@ public:
 	{
 		VideoCapture cap("assets/video/roadtest3.mp4");
 		string ResultStr;
-		PlaySound(TEXT("assets/audio/laugh0.wav"), NULL, SND_ASYNC);
+		//PlaySound(TEXT("assets/audio/laugh0.wav"), NULL, SND_ASYNC);
 
 		while (1)
 		{
