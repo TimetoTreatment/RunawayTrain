@@ -5,6 +5,7 @@
 using namespace std;
 using namespace cv;
 
+// 1280*720@60fps -> Raspberry Pi : Camera V2
 
 class LineTracer
 {
@@ -32,7 +33,6 @@ public:
 
 	void Capture(VideoCapture& cap)
 	{
-		cap.read(frame);
 		cap.read(frame);
 
 		if (frame.empty()) {
@@ -205,7 +205,7 @@ public:
 
 			float t = elapsed_seconds.count();
 			int FPS = 1 / t;
-			//cout << "FPS = " << FPS << '\n' << ResultStr << '\n' << "lineNum : " << liness.size() << endl;
+			cout << "FPS = " << FPS << '\n' << ResultStr << '\n' << "lineNum : " << liness.size() << endl;
 		}
 
 		return 0;

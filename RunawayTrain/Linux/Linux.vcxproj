@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{0016a779-a32a-4fde-bfb1-f343a791ac45}</ProjectGuid>
+    <ProjectGuid>{776ec306-491a-481b-880e-65da359be484}</ProjectGuid>
     <Keyword>Linux</Keyword>
-    <RootNamespace>RaspberryPi</RootNamespace>
+    <RootNamespace>Linux</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <ApplicationType>Linux</ApplicationType>
     <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
@@ -49,58 +49,33 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Link>
       <LibraryDependencies>wiringPi</LibraryDependencies>
-      <AdditionalOptions>`pkg-config --cflags --libs opencv4` %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <RemotePostBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
+      <Command>gpio export 17 out</Command>
+      <Message>export pin 17 using the gpio utility so that we can execute the blink program without sudo</Message>
     </RemotePostBuildEvent>
-    <ClCompile>
-      <AdditionalOptions>`pkg-config --cflags --libs opencv4` %(AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <Link>
-      <LibraryDependencies>wiringPi;opencv_core;opencv_highgui;opencv_imgproc;opencv_imgcodecs;opencv_video;opencv_videoio</LibraryDependencies>
+      <LibraryDependencies>wiringPi</LibraryDependencies>
     </Link>
     <RemotePostBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
+      <Command>gpio export 17 out</Command>
+      <Message>export pin 17 using the gpio utility so that we can execute the blink program without sudo</Message>
     </RemotePostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="blink.cpp" />
+    <ClCompile Include="LineTracer.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Motor.cpp" />
-    <ClCompile Include="opencv.cpp" />
+    <ClCompile Include="Motor.h" />
     <ClCompile Include="pwm.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LineTracer.cpp" />
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="Temp.h" />
   </ItemGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <Link>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SharedLibrarySearchPath>%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
-    </Link>
-    <ClCompile />
-    <ClCompile />
-    <RemotePreBuildEvent>
-      <Command>
-      </Command>
-    </RemotePreBuildEvent>
-    <RemotePreLinkEvent>
-      <Command>
-      </Command>
-    </RemotePreLinkEvent>
-    <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-  </ItemDefinitionGroup>
+  <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

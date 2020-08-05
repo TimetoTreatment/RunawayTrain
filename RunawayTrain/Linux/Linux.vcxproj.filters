@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Linux">
+      <UniqueIdentifier>{32130c91-a3cc-4626-85b8-2f772be986ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Windows">
+      <UniqueIdentifier>{f2e2eb9e-9c35-4e1d-9559-cb91593ebf02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_Others">
+      <UniqueIdentifier>{39376322-52ed-4de0-bfd7-d3f97f698fd6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LineTracer.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="pwm.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>_Others</Filter>
+    </ClCompile>
+    <ClCompile Include="blink.cpp">
+      <Filter>Linux</Filter>
+    </ClCompile>
+    <ClCompile Include="Motor.h">
+      <Filter>Linux</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Temp.h">
+      <Filter>_Others</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Linux</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

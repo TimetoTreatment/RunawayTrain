@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{fa42c49b-9f14-4884-948c-54b030793e53}</ProjectGuid>
+    <ProjectGuid>{5cf37074-852d-498a-9e26-e9437ac42011}</ProjectGuid>
     <RootNamespace>Reference</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -139,19 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="blink.cpp" />
     <ClCompile Include="ColorExtract.cpp" />
     <ClCompile Include="DrawImage.cpp" />
     <ClCompile Include="FindCircle.cpp" />
     <ClCompile Include="FindEdge.cpp" />
-    <ClCompile Include="LineDetector.cpp" />
-    <ClCompile Include="LineSearch2.cpp" />
-    <ClCompile Include="LineSearchMy.cpp" />
     <ClCompile Include="LineSearchMy2.cpp" />
-    <ClCompile Include="motor.cpp" />
-    <ClCompile Include="motor2.cpp" />
-    <ClCompile Include="motor3.cpp" />
-    <ClCompile Include="RegionOfInterest.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TrafficLight.cpp" />
     <ClCompile Include="WebcamAndShapeDetection.cpp" />

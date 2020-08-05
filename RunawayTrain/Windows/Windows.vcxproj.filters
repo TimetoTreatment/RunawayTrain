@@ -1,102 +1,102 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="주 클래스">
-      <UniqueIdentifier>{4b3ad584-aa0e-41a7-b40c-a933178e6494}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="보조 클래스">
-      <UniqueIdentifier>{3407b207-b9d6-44f0-98a4-4db10a9c19c1}</UniqueIdentifier>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="기타">
-      <UniqueIdentifier>{ea52cc0c-b7dd-41e5-88cf-d478f0d8d111}</UniqueIdentifier>
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="테스트">
-      <UniqueIdentifier>{5c6b7dd0-1fcc-4e33-a1e1-617fe17a08cd}</UniqueIdentifier>
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TrafficLight.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoCapture.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsCapture.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="Config.cpp">
-      <Filter>보조 클래스</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Direction.cpp">
-      <Filter>보조 클래스</Filter>
-    </ClCompile>
-    <ClCompile Include="GPIO.cpp">
-      <Filter>보조 클래스</Filter>
-    </ClCompile>
-    <ClCompile Include="Motor.cpp">
-      <Filter>보조 클래스</Filter>
-    </ClCompile>
-    <ClCompile Include="Region.cpp">
-      <Filter>보조 클래스</Filter>
-    </ClCompile>
-    <ClCompile Include="Status.cpp">
-      <Filter>보조 클래스</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DrivingManager.cpp">
-      <Filter>주 클래스</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="LineTracer.cpp">
-      <Filter>주 클래스</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="MachineLearning.cpp">
-      <Filter>주 클래스</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TrafficLight.cpp">
-      <Filter>주 클래스</Filter>
+    <ClCompile Include="Motor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Region.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Status.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>기타</Filter>
     </ClCompile>
-    <ClCompile Include="WindowsCapture.cpp">
-      <Filter>보조 클래스</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoCapture.cpp">
-      <Filter>보조 클래스</Filter>
+    <ClCompile Include="DetectCircle.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
-      <Filter>보조 클래스</Filter>
+      <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="Direction.h">
-      <Filter>보조 클래스</Filter>
-    </ClInclude>
-    <ClInclude Include="GPIO.h">
-      <Filter>보조 클래스</Filter>
-    </ClInclude>
-    <ClInclude Include="Motor.h">
-      <Filter>보조 클래스</Filter>
-    </ClInclude>
-    <ClInclude Include="Region.h">
-      <Filter>보조 클래스</Filter>
-    </ClInclude>
-    <ClInclude Include="Status.h">
-      <Filter>보조 클래스</Filter>
+      <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="DrivingManager.h">
-      <Filter>주 클래스</Filter>
-    </ClInclude>
-    <ClInclude Include="LineTracer.h">
-      <Filter>주 클래스</Filter>
-    </ClInclude>
-    <ClInclude Include="MachineLearning.h">
-      <Filter>주 클래스</Filter>
-    </ClInclude>
-    <ClInclude Include="TrafficLight.h">
-      <Filter>주 클래스</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsCapture.h">
-      <Filter>보조 클래스</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoCapture.h">
-      <Filter>보조 클래스</Filter>
+      <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>테스트</Filter>
+      <Filter>소스 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TemplateMatching.h">
-      <Filter>테스트</Filter>
+    <ClInclude Include="LineTracer.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MachineLearning.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Motor.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Region.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Status.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TrafficLight.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoCapture.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsCapture.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Temp.h">
+      <Filter>기타</Filter>
+    </ClInclude>
+    <ClInclude Include="DetectCircle.h">
+      <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
