@@ -118,81 +118,8 @@ public:
 			}
 
 
-
-			/////////////
-			/* 원 검출 */
-			/////////////
-			/*
-
-			//morphological closing 영역의 구멍 메우기
-			dilate(img_mask1, img_mask1, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-			erode(img_mask1, img_mask1, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-
-			img_mask1 = ~img_mask1;
-
-			// Setup SimpleBlobDetector parameters.
-			SimpleBlobDetector::Params params;
-
-			// Change thresholds
-			params.minThreshold = 10;
-
-
-			// Filter by Area.
-			//params.filterByArea = true;
-			//params.minArea = 5;
-
-			//// Filter by Circularity
-			//params.filterByCircularity = true;
-			//params.minCircularity = 0.9;
-
-			//// Filter by Convexity
-			//params.filterByConvexity = true;
-			//params.minConvexity = 0.87;
-
-			//// Filter by Inertia
-			//params.filterByInertia = true;
-			//params.minInertiaRatio = 0.01;
-
-
-			// Storage for blobs
-			vector<KeyPoint> keypoints;
-
-			// Set up detector with params
-			Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
-
-			// Detect blobs
-			detector->detect(img_mask1, keypoints);
-
-			// Draw detected blobs as red circles.
-			// DrawMatchesFlags::DRAW_RICH_KEYPOINTS flag ensures
-			// the size of the circle corresponds to the size of blob
-
-			Mat im_with_keypoints;
-
-			drawKeypoints(img_mask1, keypoints, im_with_keypoints, Scalar(0, 0, 255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
-			if (!keypoints.empty())
-				cout << "red\n";
-			else
-				cout << "green\n";
-
-			// Show blobs
-			imshow("keypoints", im_with_keypoints);
-
-			imshow("이진화 영상", img_mask1);
-			imshow("원본 영상", img_frame);
-
-
-			if (waitKey(10) >= 0)
-				break;
-			*/
-
-
-			//morphological closing 영역의 구멍 메우기 
 			dilate(img_mask1, img_mask1, getStructuringElement(MORPH_ELLIPSE, Size(9, 9)));
 			erode(img_mask1, img_mask1, getStructuringElement(MORPH_ELLIPSE, Size(9, 9)));
-
-
 
 			vector<vector<Point> > contours;
 

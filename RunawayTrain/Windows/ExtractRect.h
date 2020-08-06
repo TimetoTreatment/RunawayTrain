@@ -1,37 +1,17 @@
 #pragma once
-
-
-#include "opencv2/opencv.hpp"
-
-#define PI 3.1415926
+#include <opencv2/opencv.hpp>
 
 using namespace std;
 using namespace cv;
 
-Mat frame, Matrix, framePers, frameGray, frameThresh, frameEdge, frameFinal, frameFinalDuplicate;
-Mat ROILane;
-int LeftLanePos, RightLanePos, frameCenter, laneCenter, Result;
-bool Exit;
-
-stringstream ss;
 
 
-vector<int> histrogramLane;
-
-float xpos1 = 400;
-float xpos2 = 1520;
-float ypos1 = 720;
-float ypos2 = 820;
-
-Point2f Source[] = { {xpos1,ypos1}, {xpos2,ypos1}, {xpos1 - 300,ypos2}, {xpos2 + 300,ypos2} };
-Point2f Destination[] = { Point2f(0,0) ,Point2f(400,0) ,Point2f(0,240) , Point2f(400,240) };
-
-class Temp {
+class ExtractRect {
 private:
 
 
 public:
-	
+
 
 
 
@@ -106,16 +86,13 @@ public:
 
 
 					Mat extractRect = src(r);
-					imshow("newshaco", extractRect);
+					imshow("rect", extractRect);
 				}
 			}
 		}
 
 		cv::imshow("src", src);
-		cv::imshow("dst", dst);
 		cv::waitKey(0);
 		return 0;
 	}
 };
-
-

@@ -35,6 +35,9 @@ private:
 	void Preprocess(Mat& frame)
 	{
 		frame.copyTo(mFrame);
+
+		
+
 		resize(mFrame, mFrame, { 1280, 720 });
 
 		warpPerspective(mFrame, framePers, getPerspectiveTransform(ROI, Destination), Size(400, 225));
@@ -47,9 +50,15 @@ private:
 
 	void Threshold()
 	{
+		framePers = imread("assets/image/roadtest2.png", IMREAD_COLOR);
+
+		resize(framePers, framePers, { 400,225 });
 		cvtColor(framePers, frameRendered, COLOR_BGR2GRAY);
 		GaussianBlur(frameRendered, frameRendered, Size(7, 7), 0, 0);
 		threshold(frameRendered, frameRendered, 127, 255, THRESH_BINARY);
+
+		imshow("frameRendered", frameRendered);
+		
 		frameFinal = frameRendered;
 		Canny(frameRendered, frameEdge, 50, 100, 3, false);
 

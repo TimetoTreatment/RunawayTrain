@@ -149,32 +149,27 @@
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DetectCircle.cpp" />
-    <ClCompile Include="Direction.cpp" />
+    <ClCompile Include="ExtractRect.cpp" />
     <ClCompile Include="MotorController.cpp" />
     <ClCompile Include="DrivingManager.cpp" />
     <ClCompile Include="RoadTracer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Region.cpp" />
     <ClCompile Include="SignDetector.cpp" />
-    <ClCompile Include="Status.cpp" />
-    <ClCompile Include="TrafficLight.cpp" />
-    <ClCompile Include="VideoCapture.cpp" />
     <ClCompile Include="WindowsCapture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="DetectCircle.h" />
-    <ClInclude Include="Direction.h" />
+    <ClInclude Include="ExtractRect.h" />
     <ClInclude Include="MotorController.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="DrivingManager.h" />
     <ClInclude Include="RoadTracer.h" />
     <ClInclude Include="Region.h" />
     <ClInclude Include="SignDetector.h" />
-    <ClInclude Include="Status.h" />
     <ClInclude Include="Temp.h" />
-    <ClInclude Include="TrafficLight.h" />
-    <ClInclude Include="VideoCapture.h" />
+    <ClInclude Include="TemplateMatching.h" />
     <ClInclude Include="WindowsCapture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

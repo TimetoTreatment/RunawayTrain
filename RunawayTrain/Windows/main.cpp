@@ -1,4 +1,4 @@
-#define TEST 0
+#define TEST 1
 
 #if !TEST
 #include "DrivingManager.h"
@@ -11,7 +11,7 @@ int main(void)
 #endif
 
 #if TEST
-#define ROADTRACER
+#define EXTRACTRECT
 // DRIVINGMANAGER
 // TEMP
 // ROADTRACER
@@ -20,6 +20,7 @@ int main(void)
 // TEMPLATEMATCHING
 // MOTOR
 // DETECTCIRCLE
+// EXTRACTRECT
 
 
 #ifdef TEMP
@@ -144,6 +145,19 @@ int main(void)
 int main(void)
 {
 	Motor Motor.Main();
+
+	return 0;
+}
+
+#endif
+
+#ifdef EXTRACTRECT
+#include "ExtractRect.h"
+
+int main(void)
+{
+	ExtractRect extractRect;
+	extractRect.Main();
 
 	return 0;
 }

@@ -33,13 +33,21 @@ public:
 
 		mMotorController->Speed('r', 72);
 
-		for (quit = 0; !quit;)
+		for (quit = false; !quit;)
 		{
 			auto start = std::chrono::system_clock::now();
 
 
 
 			cap.read(frame);
+
+			if (frame.empty())
+			{
+				quit = true;
+				break;
+			}
+
+			
 			mRoadTracer->Main(frame);
 
 
