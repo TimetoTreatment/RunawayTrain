@@ -1,12 +1,10 @@
-#include <wiringPi.h>
-#include <softPwm.h>
 #include <iostream>
 #include "Config.h"
 
 using namespace std;
 
 
-class Motor
+class MotorController
 {
 private:
 
@@ -20,13 +18,13 @@ private:
 	const int mRight1 = 28;
 	const int mRightPwm = 29;
 
+	MotorController();
+	~MotorController();
+
 public:
 
-	Motor();
-	~Motor();
-
 	/* 회전 제어 */
-	void Control(MotorControl motorControl);
+	void Control(MotorStatus motorStatus);
 	/*
 		0     1     |  Output
 		-------------------------
@@ -40,4 +38,23 @@ public:
 
 	/* 테스트 */
 	void Test();
+
+
+private:
+	static MotorController* sInstance;
+
+public:
+	static MotorController* Instance()
+	{
+		if (sInstance == nullptr)
+			sInstance = new MotorController;
+
+		return sInstance;
+	}
+
+	static void Release()
+	{
+		delete sInstance;
+		sInstance = nullptr;
+	}
 };

@@ -9,3 +9,11 @@ enum class MotorControl
 	RightReverse,
 	RightStop,
 };
+
+enum class Direction
+{
+	Left,
+	RIght,
+	Forward,
+	Stop
+};

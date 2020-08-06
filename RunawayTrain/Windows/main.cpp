@@ -1,6 +1,20 @@
-#define LINETRACER
+#define TEST 0
+
+#if !TEST
+#include "DrivingManager.h"
+int main(void)
+{
+	DrivingManager::Instance()->MainLoop();
+	DrivingManager::Release();
+	return 0;
+}
+#endif
+
+#if TEST
+#define ROADTRACER
+// DRIVINGMANAGER
 // TEMP
-// LINETRACER
+// ROADTRACER
 // WINDOWSCAPTURE
 // LIGHT
 // TEMPLATEMATCHING
@@ -41,16 +55,16 @@ int main(int argc, char** argv)
 #endif
 
 
-#ifdef LINETRACER
+#ifdef ROADTRACER
 #include <opencv2/opencv.hpp>
-#include "LineTracer.h"
+#include "RoadTracer.h"
 
 using namespace cv;
 
 int main(void)
 {
-	LineTracer lineTracer;
-	lineTracer.Main();
+	RoadTracer roadTracer;
+	roadTracer.Main();
 
 	return 0;
 }
@@ -133,5 +147,7 @@ int main(void)
 
 	return 0;
 }
+
+#endif
 
 #endif

@@ -7,17 +7,16 @@ using namespace cv;
 
 // 1280*720@60fps -> Raspberry Pi : Camera V2
 
-class LineTracer
+class RoadTracer
 {
-public:
-	Mat frame, Matrix, framePers, frameRendered, frameEdge, frameFinal, frameFinalDuplicate;
+private:
+
+	Mat mFrame, framePers, frameRendered, frameEdge, frameFinal, frameFinalDuplicate;
 	Mat ROILane;
 	int LeftLanePos, RightLanePos, frameCenter, laneCenter, Result;
 	bool Exit;
 	vector<Vec2f> lines;
 	Vec4i L;
-
-	stringstream ss;
 
 	vector<int> histrogramLane;
 
@@ -33,21 +32,17 @@ public:
 
 	Point2f Destination[4] = { Point2f(0,0) ,Point2f(400,0) ,Point2f(0,225) , Point2f(400,225) };
 
-	void Capture(VideoCapture& cap)
+	void Preprocess(Mat& frame)
 	{
-		cap.read(frame);
-		resize(frame, frame, { 1280, 720 });
-	}
+		frame.copyTo(mFrame);
+		resize(mFrame, mFrame, { 1280, 720 });
 
-	void Perspective()
-	{
-		Matrix = getPerspectiveTransform(ROI, Destination);
-		warpPerspective(frame, framePers, Matrix, Size(400, 225));
+		warpPerspective(mFrame, framePers, getPerspectiveTransform(ROI, Destination), Size(400, 225));
 
-		line(frame, ROI[0], ROI[1], Scalar(0, 0, 255), 2);
-		line(frame, ROI[1], ROI[3], Scalar(0, 0, 255), 2);
-		line(frame, ROI[3], ROI[2], Scalar(0, 0, 255), 2);
-		line(frame, ROI[2], ROI[0], Scalar(0, 0, 255), 2);
+		line(mFrame, ROI[0], ROI[1], Scalar(0, 0, 255), 2);
+		line(mFrame, ROI[1], ROI[3], Scalar(0, 0, 255), 2);
+		line(mFrame, ROI[3], ROI[2], Scalar(0, 0, 255), 2);
+		line(mFrame, ROI[2], ROI[0], Scalar(0, 0, 255), 2);
 	}
 
 	void Threshold()
@@ -58,18 +53,6 @@ public:
 		frameFinal = frameRendered;
 		Canny(frameRendered, frameEdge, 50, 100, 3, false);
 
-		/* 1¹ø */
-		//HoughLinesP(frameEdge, lines, rho, theta, hough_threshold, minLineLength, maxLineGap);
-		//cvtColor(frameEdge, frameEdge, COLOR_GRAY2BGR);
-
-		//for (int i = 0; i < lines.size(); i++)
-		//{
-		//	L = lines[i];
-		//	line(frameEdge, Point(L[0], L[1]), Point(L[2], L[3]), Scalar(0, 0, 255), 1, LINE_AA);
-		//	line(frameEdge, Point(L[0], L[1]), Point(L[2], L[3]), Scalar(0, 0, 255), 1, LINE_AA);
-		//}
-
-		/* 2¹ø */
 		HoughLines(frameEdge, lines, 1, 1 * CV_PI / 180, 100);
 		cvtColor(frameEdge, frameEdge, COLOR_GRAY2BGR);
 		imshow("frameEdge", frameEdge);
@@ -151,56 +134,44 @@ public:
 	}
 
 
-	int Main()
+public:
+	void Main(Mat& frame)
 	{
-		VideoCapture cap("assets/video/roadtest3.mp4");
 		string ResultStr;
 
-		while (1)
-		{
-			auto start = std::chrono::system_clock::now();
+		Preprocess(frame);
+		Threshold();
+		Histrogram();
+		LaneFinder();
+		LaneCenter();
 
-			Capture(cap);
-			Perspective();
-			Threshold();
-			Histrogram();
-			LaneFinder();
-			LaneCenter();
+		if (Result < -10)
+			ResultStr = "Left";
+		else if (Result > 10)
+			ResultStr = "right";
+		else
+			ResultStr = "Foward";
 
-			ss.str(" ");
-			ss.clear();
+		cout << "Direction = " << ResultStr << endl;
 
-			if (Result < -10)
-				ResultStr = "Left";
-			else if (Result > 10)
-				ResultStr = "right";
-			else
-				ResultStr = "Foward";
+		putText(mFrame, ResultStr, Point2f(50, 100), 0, 2, Scalar(0, 0, 255), 2);
 
-			ss << "Direction = " << ResultStr;
+		namedWindow("orignal", WINDOW_NORMAL);
+		imshow("orignal", mFrame);
 
-			putText(frame, ss.str(), Point2f(50, 100), 0, 2, Scalar(0, 0, 255), 2);
+		namedWindow("Perspective", WINDOW_NORMAL);
+		imshow("Perspective", framePers);
 
-			namedWindow("orignal", WINDOW_NORMAL);
-			imshow("orignal", frame);
-
-			namedWindow("Perspective", WINDOW_NORMAL);
-			imshow("Perspective", framePers);
-
-			namedWindow("Final", WINDOW_NORMAL);
-			imshow("Final", frameFinal);
-
-			waitKey(1);
-
-			std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start;
-
-			int FPS = 1 / elapsed_seconds.count();
-			cout << "FPS = " << FPS << '\n' << ResultStr << '\n' << "lineNum : " << lines.size() << endl;
-		}
-
-		return 0;
-
+		namedWindow("Final", WINDOW_NORMAL);
+		imshow("Final", frameFinal);
 	}
+
+private:
+	static RoadTracer* sInstance;
+
+public:
+	static RoadTracer* Instance();
+	static void Release();
 };
 
 
@@ -218,7 +189,7 @@ using namespace std;
 using namespace cv;
 using namespace raspicam;
 
-Mat frame, Matrix, framePers, frameGray, frameThresh, frameEdge, frameFinal, frameFinalDuplicate;
+Mat mFrame, Matrix, framePers, frameGray, frameThresh, frameEdge, frameFinal, frameFinalDuplicate;
 Mat ROILane;
 int LeftLanePos, RightLanePos, frameCenter, laneCenter, Result;
 
@@ -248,20 +219,20 @@ Point2f Destination[] = {Point2f(100,0),Point2f(280,0),Point2f(100,240), Point2f
 void Capture()
 {
 	Camera.grab();
-	Camera.retrieve( frame);
-	cvtColor(frame, frame, COLOR_BGR2RGB);
+	Camera.retrieve( mFrame);
+	cvtColor(mFrame, mFrame, COLOR_BGR2RGB);
 }
 
 void Perspective()
 {
-	line(frame,Source[0], Source[1], Scalar(0,0,255), 2);
-	line(frame,Source[1], Source[3], Scalar(0,0,255), 2);
-	line(frame,Source[3], Source[2], Scalar(0,0,255), 2);
-	line(frame,Source[2], Source[0], Scalar(0,0,255), 2);
+	line(mFrame,Source[0], Source[1], Scalar(0,0,255), 2);
+	line(mFrame,Source[1], Source[3], Scalar(0,0,255), 2);
+	line(mFrame,Source[3], Source[2], Scalar(0,0,255), 2);
+	line(mFrame,Source[2], Source[0], Scalar(0,0,255), 2);
 
 
 	Matrix = getPerspectiveTransform(Source, Destination);
-	warpPerspective(frame, framePers, Matrix, Size(400,240));
+	warpPerspective(mFrame, framePers, Matrix, Size(400,240));
 }
 
 void Threshold()
@@ -280,7 +251,7 @@ void Histrogram()
 	histrogramLane.resize(400);
 	histrogramLane.clear();
 
-	for(int i=0; i<400; i++)       //frame.size().width = 400
+	for(int i=0; i<400; i++)       //mFrame.size().width = 400
 	{
 	ROILane = frameFinalDuplicate(Rect(i,140,1,100));
 	divide(255, ROILane, ROILane);
@@ -344,13 +315,13 @@ int main(int argc,char **argv)
 	ss.str(" ");
 	ss.clear();
 	ss<<"Result = "<<Result;
-	putText(frame, ss.str(), Point2f(1,50), 0,1, Scalar(0,0,255), 2);
+	putText(mFrame, ss.str(), Point2f(1,50), 0,1, Scalar(0,0,255), 2);
 
 
 	namedWindow("orignal", WINDOW_KEEPRATIO);
 	moveWindow("orignal", 0, 100);
 	resizeWindow("orignal", 640, 480);
-	imshow("orignal", frame);
+	imshow("orignal", mFrame);
 
 	namedWindow("Perspective", WINDOW_KEEPRATIO);
 	moveWindow("Perspective", 640, 100);

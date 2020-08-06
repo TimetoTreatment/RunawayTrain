@@ -15,87 +15,87 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>기타</Filter>
+    </ClCompile>
+    <ClCompile Include="DetectCircle.cpp">
+      <Filter>테스트</Filter>
+    </ClCompile>
+    <ClCompile Include="Direction.cpp">
+      <Filter>테스트</Filter>
+    </ClCompile>
+    <ClCompile Include="Region.cpp">
+      <Filter>테스트</Filter>
+    </ClCompile>
+    <ClCompile Include="Status.cpp">
+      <Filter>테스트</Filter>
+    </ClCompile>
     <ClCompile Include="TrafficLight.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>테스트</Filter>
     </ClCompile>
     <ClCompile Include="VideoCapture.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>테스트</Filter>
     </ClCompile>
     <ClCompile Include="WindowsCapture.cpp">
+      <Filter>테스트</Filter>
+    </ClCompile>
+    <ClCompile Include="SignDetector.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="RoadTracer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Config.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Direction.cpp">
+    <ClCompile Include="MotorController.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DrivingManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="LineTracer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="MachineLearning.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Motor.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Region.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Status.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>기타</Filter>
-    </ClCompile>
-    <ClCompile Include="DetectCircle.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Direction.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DrivingManager.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="LineTracer.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="MachineLearning.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Motor.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Region.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Status.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="TrafficLight.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoCapture.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsCapture.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Temp.h">
       <Filter>기타</Filter>
     </ClInclude>
     <ClInclude Include="DetectCircle.h">
+      <Filter>테스트</Filter>
+    </ClInclude>
+    <ClInclude Include="Direction.h">
+      <Filter>테스트</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>테스트</Filter>
+    </ClInclude>
+    <ClInclude Include="Region.h">
+      <Filter>테스트</Filter>
+    </ClInclude>
+    <ClInclude Include="Status.h">
+      <Filter>테스트</Filter>
+    </ClInclude>
+    <ClInclude Include="TrafficLight.h">
+      <Filter>테스트</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoCapture.h">
+      <Filter>테스트</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsCapture.h">
+      <Filter>테스트</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadTracer.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SignDetector.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MotorController.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DrivingManager.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>

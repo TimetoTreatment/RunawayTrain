@@ -24,6 +24,9 @@
     <ClCompile Include="Motor.h">
       <Filter>Linux</Filter>
     </ClCompile>
+    <ClCompile Include="Motor.cpp">
+      <Filter>Linux</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Temp.h">

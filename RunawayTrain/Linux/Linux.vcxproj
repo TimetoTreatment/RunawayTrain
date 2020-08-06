@@ -67,6 +67,7 @@
   <ItemGroup>
     <ClCompile Include="LineTracer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Motor.cpp" />
     <ClCompile Include="Motor.h" />
     <ClCompile Include="pwm.cpp" />
   </ItemGroup>

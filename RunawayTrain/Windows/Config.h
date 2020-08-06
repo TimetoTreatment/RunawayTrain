@@ -1,5 +1,19 @@
 #pragma once
-class Config
+
+enum class MotorStatus
 {
+	LeftForward,
+	LeftReverse,
+	LeftStop,
+	RightForward,
+	RightReverse,
+	RightStop,
 };
 
+enum class Direction
+{
+	Left,
+	RIght,
+	Forward,
+	Stop
+};
