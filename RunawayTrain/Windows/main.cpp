@@ -1,4 +1,4 @@
-#define TEST 1
+#define TEST 0
 
 #if !TEST
 #include "DrivingManager.h"
@@ -11,7 +11,7 @@ int main(void)
 #endif
 
 #if TEST
-#define EXTRACTRECT
+#define TEMPLATEMATCHING
 // DRIVINGMANAGER
 // TEMP
 // ROADTRACER

@@ -15,5 +15,9 @@ enum class Direction
 	Left,
 	RIght,
 	Forward,
-	Stop
+	Stop,
+
+	Left90,
+	Right90,
+	Forward90,
 };

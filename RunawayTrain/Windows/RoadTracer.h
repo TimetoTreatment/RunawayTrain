@@ -1,6 +1,7 @@
 #pragma once
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include "config.h"
 
 using namespace std;
 using namespace cv;
@@ -11,12 +12,14 @@ class RoadTracer
 {
 private:
 
-	Mat mFrame, framePers, frameRendered, frameEdge, frameFinal, frameFinalDuplicate;
+	Mat mFrameOriginal, framePers, frameRendered, frameEdge, frameFinal, frameFinalDuplicate;
 	Mat ROILane;
 	int LeftLanePos, RightLanePos, frameCenter, laneCenter, Result;
 	bool Exit;
 	vector<Vec2f> lines;
 	Vec4i L;
+
+	Direction mDirection;
 
 	vector<int> histrogramLane;
 
@@ -32,39 +35,29 @@ private:
 
 	Point2f Destination[4] = { Point2f(0,0) ,Point2f(400,0) ,Point2f(0,225) , Point2f(400,225) };
 
-	void Preprocess(Mat& frame)
+	void Preprocess()
 	{
-		frame.copyTo(mFrame);
+		warpPerspective(mFrameOriginal, framePers, getPerspectiveTransform(ROI, Destination), Size(400, 225));
 
-		
-
-		resize(mFrame, mFrame, { 1280, 720 });
-
-		warpPerspective(mFrame, framePers, getPerspectiveTransform(ROI, Destination), Size(400, 225));
-
-		line(mFrame, ROI[0], ROI[1], Scalar(0, 0, 255), 2);
-		line(mFrame, ROI[1], ROI[3], Scalar(0, 0, 255), 2);
-		line(mFrame, ROI[3], ROI[2], Scalar(0, 0, 255), 2);
-		line(mFrame, ROI[2], ROI[0], Scalar(0, 0, 255), 2);
+		line(mFrameOriginal, ROI[0], ROI[1], Scalar(0, 0, 255), 2);
+		line(mFrameOriginal, ROI[1], ROI[3], Scalar(0, 0, 255), 2);
+		line(mFrameOriginal, ROI[3], ROI[2], Scalar(0, 0, 255), 2);
+		line(mFrameOriginal, ROI[2], ROI[0], Scalar(0, 0, 255), 2);
 	}
 
 	void Threshold()
 	{
-		framePers = imread("assets/image/roadtest2.png", IMREAD_COLOR);
-
 		resize(framePers, framePers, { 400,225 });
 		cvtColor(framePers, frameRendered, COLOR_BGR2GRAY);
 		GaussianBlur(frameRendered, frameRendered, Size(7, 7), 0, 0);
 		threshold(frameRendered, frameRendered, 127, 255, THRESH_BINARY);
 
-		imshow("frameRendered", frameRendered);
-		
+
 		frameFinal = frameRendered;
 		Canny(frameRendered, frameEdge, 50, 100, 3, false);
 
 		HoughLines(frameEdge, lines, 1, 1 * CV_PI / 180, 100);
 		cvtColor(frameEdge, frameEdge, COLOR_GRAY2BGR);
-		imshow("frameEdge", frameEdge);
 
 		float rho, theta;
 		Point pt1, pt2;
@@ -144,35 +137,92 @@ private:
 
 
 public:
-	void Main(Mat& frame)
+	Direction Main(Mat& frame)
 	{
+		mDirection = Direction::Forward;
+
 		string ResultStr;
 
-		Preprocess(frame);
+
+		frame.copyTo(mFrameOriginal);
+
+		resize(mFrameOriginal, mFrameOriginal, { 1280, 720 });
+
+		Preprocess();
+
+		mFrameOriginal = imread("assets/image/roadtestleft.png");
+		framePers = mFrameOriginal;
+		imshow("road", mFrameOriginal);
+
 		Threshold();
 		Histrogram();
 		LaneFinder();
 		LaneCenter();
 
-		if (Result < -10)
-			ResultStr = "Left";
-		else if (Result > 10)
-			ResultStr = "right";
-		else
-			ResultStr = "Foward";
+		//if (Result < -10)
+		//	ResultStr = "Left";
+		//else if (Result > 10)
+		//	ResultStr = "right";
+		//else
+		//	ResultStr = "Foward";
 
-		cout << "Direction = " << ResultStr << endl;
+		//cout << "Direction = " << ResultStr << endl;
 
-		putText(mFrame, ResultStr, Point2f(50, 100), 0, 2, Scalar(0, 0, 255), 2);
+		putText(mFrameOriginal, ResultStr, Point2f(50, 100), 0, 2, Scalar(0, 0, 255), 2);
 
 		namedWindow("orignal", WINDOW_NORMAL);
-		imshow("orignal", mFrame);
+		imshow("orignal", mFrameOriginal);
 
 		namedWindow("Perspective", WINDOW_NORMAL);
 		imshow("Perspective", framePers);
 
 		namedWindow("Final", WINDOW_NORMAL);
 		imshow("Final", frameFinal);
+
+		bool horizon = false;
+
+		int quit = false;
+
+
+
+		for (int i = 0; !quit && i < lines.size(); i++)
+		{
+			double theta = lines[i][1];
+
+			if (1.3 <= theta && theta <= 1.9)
+			{
+				horizon = true;
+
+				for (int j = 0; j < lines.size(); j++)
+				{
+					int rho = lines[j][0];
+					theta = lines[j][1];
+
+
+					// 0.78 = 우회전	45도  
+					// 1.57 = 수직		90도
+					// 2.36 = 좌회전	135도
+
+					if (!(1.3 <= theta && theta <= 1.9))
+					{
+						if (0.6 <= theta && theta <= 1.0)
+						{
+							mDirection = Direction::Right90;
+							cout << "Go Right\n";
+						}
+						else if (2.2 <= theta && theta <= 2.6)
+						{
+							mDirection = Direction::Left90;
+							cout << "Go Left\n";
+						}
+
+						quit = true;
+						break;
+					}
+				}
+			}
+		}
+
 	}
 
 private:

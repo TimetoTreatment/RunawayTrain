@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 {
 	Temp temp;
 	temp.Main();
-}
+}home 
 
 #endif
 

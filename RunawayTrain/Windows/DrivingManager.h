@@ -1,6 +1,7 @@
 #pragma once
 #include "RoadTracer.h"
 #include "MotorController.h"
+#include "Config.h"
 
 
 class DrivingManager
@@ -37,8 +38,6 @@ public:
 		{
 			auto start = std::chrono::system_clock::now();
 
-
-
 			cap.read(frame);
 
 			if (frame.empty())
@@ -47,20 +46,27 @@ public:
 				break;
 			}
 
-			
-			mRoadTracer->Main(frame);
+			switch (mRoadTracer->Main(frame))
+			{
+			case Direction::Left90:
+				mMotorController->Control(MotorStatus::LeftStop);
+				mMotorController->Control(MotorStatus::RightForward);
 
+				break;
 
+			case Direction::Right90:
 
-			std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start;
+				mMotorController->Control(MotorStatus::RightStop);
+				mMotorController->Control(MotorStatus::LeftForward);
 
-			int FPS = 1 / elapsed_seconds.count();
-			cout << "FPS = " << FPS << endl;
+				break;
+			}
 
+			//std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start;
+			//int FPS = 1 / elapsed_seconds.count();
+			//cout << "FPS = " << FPS << endl;
 
-			int key = waitKey(1);
-
-			switch (key)
+			switch (waitKey(1))
 			{
 			case 27:
 				quit = 1;
@@ -71,16 +77,6 @@ public:
 				break;
 			}
 		}
-
-
-
-
-
-
-
-
-
-
 	}
 
 

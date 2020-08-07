@@ -27,7 +27,7 @@ public:
 		int subCols = img_color.cols / 50;
 		int subRows = img_color.rows / 50;
 
-		Mat img_template = imread("assets/image/Right/1.png", IMREAD_GRAYSCALE);
+		Mat img_template = imread("assets/image/Right/2.png", IMREAD_GRAYSCALE);
 
 		for (int ab = 0; ab < 50; ab++)
 		{
@@ -110,7 +110,7 @@ public:
 			imshow("template", img_template);
 			imshow("Result", img_color);
 			resize(img_color, img_color, { img_color.cols - subCols,img_color.rows - subRows });
-			waitKey(1);
+			waitKey(0);
 		}
 	}
 
