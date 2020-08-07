@@ -156,6 +156,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Region.cpp" />
     <ClCompile Include="SignDetector.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="WindowsCapture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +171,7 @@
     <ClInclude Include="SignDetector.h" />
     <ClInclude Include="Temp.h" />
     <ClInclude Include="TemplateMatching.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="WindowsCapture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

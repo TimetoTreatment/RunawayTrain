@@ -1,7 +1,11 @@
 #pragma once
+#include <iostream>
 #include "RoadTracer.h"
 #include "MotorController.h"
 #include "Config.h"
+#include "Timer.h"
+
+using namespace std;
 
 
 class DrivingManager
@@ -11,10 +15,27 @@ private:
 	RoadTracer* mRoadTracer;
 	MotorController* mMotorController;
 
+	VideoCapture mCapture;
+	Mat mFrameColor;
+
+	Timer mLoopTimer;
+	Timer mTurnTimer;
+	Timer mStopTimer;
+
+	Direction mDirection;
+
+	int mLeftSpeed = 72;
+	int mRightSpeed = 100;
+
+	bool mExit = false;
+
+
 	DrivingManager()
 	{
 		mRoadTracer = RoadTracer::Instance();
 		mMotorController = MotorController::Instance();
+
+		mCapture.open("assets/video/roadtest3.mp4");
 	}
 
 	~DrivingManager()
@@ -23,53 +44,83 @@ private:
 		MotorController::Release();
 	}
 
+	void Preprocess()
+	{
+		mCapture.read(mFrameColor);
+		if (mFrameColor.empty())
+		{
+			mExit = true;
+			exit(-1);
+		}
+
+		resize(mFrameColor, mFrameColor, { 1280, 720 });
+	}
+
 
 public:
 
 	void MainLoop()
 	{
-		VideoCapture cap("assets/video/roadtest3.mp4");
-		Mat frame;
-		bool quit;
+		mStopTimer.Reset();
 
-		mMotorController->Speed('r', 72);
+		mMotorController->Speed('l', mLeftSpeed);
+		mMotorController->Speed('r', mRightSpeed);
 
-		for (quit = false; !quit;)
+		for (mExit = false; !mExit;)
 		{
-			auto start = std::chrono::system_clock::now();
+			mLoopTimer.Reset();
+			mTurnTimer.Reset();
 
-			cap.read(frame);
+			Preprocess();
 
-			if (frame.empty())
+			mDirection = mRoadTracer->Main(mFrameColor);
+
+			//if (mStopTimer.GetElapsedTime() > 10)
+			//mDirection = STOPSIGN;
+			//mDirection = MARKDETECT;
+
+			switch (mDirection)
 			{
-				quit = true;
+			case Direction::Left:
+				mMotorController->Control(MotorStatus::LeftForward);
+				mMotorController->Control(MotorStatus::RightForward);
+				mMotorController->Speed('l', mLeftSpeed / 2);
+				mMotorController->Speed('r', mRightSpeed);
 				break;
-			}
 
-			switch (mRoadTracer->Main(frame))
-			{
+			case Direction::Right:
+				mMotorController->Control(MotorStatus::LeftForward);
+				mMotorController->Control(MotorStatus::RightForward);
+				mMotorController->Speed('l', mLeftSpeed);
+				mMotorController->Speed('r', mRightSpeed / 2);
+				break;
+
 			case Direction::Left90:
 				mMotorController->Control(MotorStatus::LeftStop);
 				mMotorController->Control(MotorStatus::RightForward);
-
+				// delay(2000);
 				break;
 
 			case Direction::Right90:
-
 				mMotorController->Control(MotorStatus::RightStop);
 				mMotorController->Control(MotorStatus::LeftForward);
+				// delay(2000);
+				break;
 
+			case Direction::Stop:
+				mMotorController->Control(MotorStatus::RightStop);
+				mMotorController->Control(MotorStatus::LeftStop);
+				// delay(6000);
+				mStopTimer.Reset();
 				break;
 			}
 
-			//std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start;
-			//int FPS = 1 / elapsed_seconds.count();
-			//cout << "FPS = " << FPS << endl;
+			cout << (int)(1 / mLoopTimer.GetElapsedTime()) << "\n";
 
 			switch (waitKey(1))
 			{
 			case 27:
-				quit = 1;
+				mExit = true;
 				break;
 
 			case ' ':

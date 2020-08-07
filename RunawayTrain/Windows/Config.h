@@ -13,11 +13,10 @@ enum class MotorStatus
 enum class Direction
 {
 	Left,
-	RIght,
+	Right,
 	Forward,
 	Stop,
 
 	Left90,
 	Right90,
-	Forward90,
 };

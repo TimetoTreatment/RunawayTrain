@@ -45,6 +45,9 @@
     <ClCompile Include="ExtractRect.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>_Sourece</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Temp.h">
@@ -82,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="ExtractRect.h">
       <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>_Sourece</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
