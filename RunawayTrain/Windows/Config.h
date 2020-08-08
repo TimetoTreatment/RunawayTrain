@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+
+using namespace std;
 
 enum class MotorStatus
 {
@@ -12,11 +15,13 @@ enum class MotorStatus
 
 enum class Direction
 {
-	Left,
-	Right,
 	Forward,
 	Stop,
-
-	Left90,
-	Right90,
+	LeftCorrection,
+	RightCorrection,
+	LeftTurn,
+	RightTurn,
 };
+
+
+string DirectionStr(Direction direction);

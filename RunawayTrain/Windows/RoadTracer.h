@@ -12,16 +12,27 @@ class RoadTracer
 {
 private:
 
-	Mat mFrameColor, mFramePerspective, mFrameEdge, mFrameFinal, mFrameHistogram;
+	bool mImageTest;
+	bool mVideoShow;
+
+	Mat mFrameOriginal, mFrameFinal;
+	Mat mFramePerspective, mFrameEdge, mFrameEdgeCenter, mFrameHistogram;
 
 	float mXMarginTop = 267;
 	float mXMarginBottom = 66;
 	float mYPos = 480;
 	float mYSize = 66;
 
-	Point2f ROI[4] = {
+	Point2f mSrcROI[4] = {
 		{mXMarginTop,mYPos}, {1280 - mXMarginTop,mYPos},
 		{mXMarginBottom,mYPos + mYSize}, {1280 - mXMarginBottom,mYPos + mYSize}
+	};
+
+	Point2f mDstROI[4] = {
+		Point2f(0,0) ,
+		Point2f(400,0) ,
+		Point2f(0,225) ,
+		Point2f(400,225)
 	};
 
 	vector<Vec2f> mLines;
@@ -31,20 +42,9 @@ private:
 	Direction mDirection;
 	bool mExit;
 
-
-
-
-
-	Point2f Destination[4] = {
-		Point2f(0,0) ,
-		Point2f(400,0) ,
-		Point2f(0,225) ,
-		Point2f(400,225)
-	};
-
 	void Preprocess();
 
-	void Test(bool enable = false);
+	void Test(bool imgEnable = false);
 
 	void Threshold();
 
@@ -54,11 +54,16 @@ private:
 
 	void LaneCenter();
 
-	void Show(bool enable = false);
+	void Show();
+
+	void Calculate();
 
 
 public:
-	Direction Main(Mat& frame);
+
+	void DebugMode(bool videoShow = true, bool imageTest = false);
+
+	Direction Main(Mat& frameOriginal, Mat& frameFinal);
 
 
 private:

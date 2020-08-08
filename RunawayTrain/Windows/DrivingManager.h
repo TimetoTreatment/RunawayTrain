@@ -12,11 +12,12 @@ class DrivingManager
 {
 private:
 
-	RoadTracer* mRoadTracer;
-	MotorController* mMotorController;
+	RoadTracer* mRoadTracer = RoadTracer::Instance();
+	MotorController* mMotorController = MotorController::Instance();
 
 	VideoCapture mCapture;
-	Mat mFrameColor;
+	Mat mFrameOrigianl;
+	Mat mFrameFinal;
 
 	Timer mLoopTimer;
 	Timer mTurnTimer;
@@ -24,18 +25,22 @@ private:
 
 	Direction mDirection;
 
-	int mLeftSpeed = 72;
-	int mRightSpeed = 100;
-
+	int mLeftSpeed;
+	int mRightSpeed;
 	bool mExit = false;
-
 
 	DrivingManager()
 	{
-		mRoadTracer = RoadTracer::Instance();
-		mMotorController = MotorController::Instance();
+		/* 속도 */
+		mDirection = Direction::Forward;
+		mLeftSpeed = 72;
+		mRightSpeed = 100;
 
+		/* 영상 */
 		mCapture.open("assets/video/roadtest3.mp4");
+
+		/* 디버그 */
+		mRoadTracer->DebugMode(true, false);
 	}
 
 	~DrivingManager()
@@ -46,14 +51,15 @@ private:
 
 	void Preprocess()
 	{
-		mCapture.read(mFrameColor);
-		if (mFrameColor.empty())
+		mCapture.read(mFrameOrigianl);
+		if (mFrameOrigianl.empty())
 		{
-			mExit = true;
+			cout << "Error : DrivingManager::Preprocess";
 			exit(-1);
 		}
 
-		resize(mFrameColor, mFrameColor, { 1280, 720 });
+		resize(mFrameOrigianl, mFrameOrigianl, { 1280, 720 });
+		mFrameOrigianl.copyTo(mFrameFinal);
 	}
 
 
@@ -73,7 +79,7 @@ public:
 
 			Preprocess();
 
-			mDirection = mRoadTracer->Main(mFrameColor);
+			mDirection = mRoadTracer->Main(mFrameOrigianl, mFrameFinal);
 
 			//if (mStopTimer.GetElapsedTime() > 10)
 			//mDirection = STOPSIGN;
@@ -88,27 +94,27 @@ public:
 				mMotorController->Speed('r', mRightSpeed);
 				break;
 
-			case Direction::Left:
+			case Direction::LeftCorrection:
 				mMotorController->Control(MotorStatus::LeftForward);
 				mMotorController->Control(MotorStatus::RightForward);
 				mMotorController->Speed('l', mLeftSpeed / 2);
 				mMotorController->Speed('r', mRightSpeed);
 				break;
 
-			case Direction::Right:
+			case Direction::RightCorrection:
 				mMotorController->Control(MotorStatus::LeftForward);
 				mMotorController->Control(MotorStatus::RightForward);
 				mMotorController->Speed('l', mLeftSpeed);
 				mMotorController->Speed('r', mRightSpeed / 2);
 				break;
 
-			case Direction::Left90:
+			case Direction::LeftTurn:
 				mMotorController->Control(MotorStatus::LeftStop);
 				mMotorController->Control(MotorStatus::RightForward);
 				// delay(2000);
 				break;
 
-			case Direction::Right90:
+			case Direction::RightTurn:
 				mMotorController->Control(MotorStatus::RightStop);
 				mMotorController->Control(MotorStatus::LeftForward);
 				// delay(2000);
@@ -122,9 +128,18 @@ public:
 				break;
 			}
 
-			cout << (int)(1 / mLoopTimer.GetElapsedTime()) << "\n";
+			putText(mFrameFinal,
+				to_string(int(1 / mLoopTimer.GetElapsedTime())),{ 1200,40 }, 
+				FONT_HERSHEY_DUPLEX, 1, Scalar(0, 255, 0), 1);
 
-			switch (waitKey(0))
+			putText(mFrameFinal,
+				DirectionStr(mDirection), { 20,40 }, 
+				FONT_HERSHEY_DUPLEX, 1, Scalar(0, 0, 255), 2);
+
+			namedWindow("Final", WINDOW_AUTOSIZE);
+			imshow("Final", mFrameFinal);
+
+			switch (waitKey(1))
 			{
 			case 27:
 				mExit = true;

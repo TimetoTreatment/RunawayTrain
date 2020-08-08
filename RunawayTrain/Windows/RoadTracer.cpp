@@ -1,50 +1,46 @@
 #include "RoadTracer.h"
 
 
-
-
 void RoadTracer::Preprocess()
 {
-	warpPerspective(mFrameColor, mFramePerspective, getPerspectiveTransform(ROI, Destination), Size(400, 225));
+	warpPerspective(mFrameOriginal, mFramePerspective, getPerspectiveTransform(mSrcROI, mDstROI), Size(400, 225));
 
-	line(mFrameColor, ROI[0], ROI[1], Scalar(0, 0, 255), 2);
-	line(mFrameColor, ROI[1], ROI[3], Scalar(0, 0, 255), 2);
-	line(mFrameColor, ROI[3], ROI[2], Scalar(0, 0, 255), 2);
-	line(mFrameColor, ROI[2], ROI[0], Scalar(0, 0, 255), 2);
-}
+	line(mFrameFinal, mSrcROI[0], mSrcROI[1], Scalar(0, 0, 255), 2);
+	line(mFrameFinal, mSrcROI[1], mSrcROI[3], Scalar(0, 0, 255), 2);
+	line(mFrameFinal, mSrcROI[3], mSrcROI[2], Scalar(0, 0, 255), 2);
+	line(mFrameFinal, mSrcROI[2], mSrcROI[0], Scalar(0, 0, 255), 2);
 
-void RoadTracer::Test(bool enable)
-{
-	if (!enable)
-		return;
-
-	static int testCase = 0;
-
-	switch (testCase % 5)
+	if (mImageTest == true)
 	{
-	case 0:
-		mFramePerspective = imread("assets/image/roadtest/forward.png");
-		break;
+		static int testCase = 0;
 
-	case 1:
-		mFramePerspective = imread("assets/image/roadtest/left.png");
-		break;
+		switch (testCase % 5)
+		{
+		case 0:
+			mFramePerspective = imread("assets/image/roadtest/forward.png");
+			break;
 
-	case 2:
-		mFramePerspective = imread("assets/image/roadtest/right.png");
-		break;
+		case 1:
+			mFramePerspective = imread("assets/image/roadtest/left.png");
+			break;
 
-	case 3:
-		mFramePerspective = imread("assets/image/roadtest/left90.png");
-		break;
+		case 2:
+			mFramePerspective = imread("assets/image/roadtest/right.png");
+			break;
 
-	case 4:
-		mFramePerspective = imread("assets/image/roadtest/right90.png");
-		break;
+		case 3:
+			mFramePerspective = imread("assets/image/roadtest/left90.png");
+			break;
+
+		case 4:
+			mFramePerspective = imread("assets/image/roadtest/right90.png");
+			break;
+		}
+
+		testCase++;
 	}
-
-	testCase++;
 }
+
 
 void RoadTracer::Threshold()
 {
@@ -77,9 +73,9 @@ void RoadTracer::Threshold()
 		line(mFrameEdge, pt1, pt2, Scalar(0, 0, 255), 3, LINE_AA);
 	}
 
-	imshow("HoughLines", mFrameEdge);
-	cvtColor(mFramePerspective, mFrameFinal, COLOR_GRAY2BGR);
+	cvtColor(mFramePerspective, mFrameEdgeCenter, COLOR_GRAY2BGR);
 }
+
 
 void RoadTracer::Histrogram()
 {
@@ -93,6 +89,7 @@ void RoadTracer::Histrogram()
 	for (int i = 0; i < width; i++)
 		mHistrogramLane[i] = (int)(sum(mFrameHistogram(Rect(i, 0, 1, 100)))[0]);
 }
+
 
 void RoadTracer::LaneFinder()
 {
@@ -114,48 +111,36 @@ void RoadTracer::LaneFinder()
 	mLeftLanePos = distance(mHistrogramLane.begin(), LeftPtr);
 	mRightLanePos = distance(mHistrogramLane.begin(), RightPtr);
 
-	line(mFrameFinal, Point2f(mLeftLanePos, 0), Point2f(mLeftLanePos, 225), Scalar(0, 255, 0), 2);
-	line(mFrameFinal, Point2f(mRightLanePos, 0), Point2f(mRightLanePos, 225), Scalar(0, 255, 0), 2);
+	line(mFrameEdgeCenter, Point2f(mLeftLanePos, 0), Point2f(mLeftLanePos, 225), Scalar(0, 255, 0), 2);
+	line(mFrameEdgeCenter, Point2f(mRightLanePos, 0), Point2f(mRightLanePos, 225), Scalar(0, 255, 0), 2);
 }
+
 
 void RoadTracer::LaneCenter()
 {
 	mLaneCenter = (mRightLanePos - mLeftLanePos) / 2 + mLeftLanePos;
 	mFrameCenter = 200;
 
-	line(mFrameFinal, Point2f(mLaneCenter, 180), Point2f(mLaneCenter, 225), Scalar(0, 0, 255), 3);
-	line(mFrameFinal, Point2f(mFrameCenter, 0), Point2f(mFrameCenter, 225), Scalar(255, 0, 0), 3);
+	line(mFrameEdgeCenter, Point2f(mLaneCenter, 180), Point2f(mLaneCenter, 225), Scalar(0, 0, 255), 3);
+	line(mFrameEdgeCenter, Point2f(mFrameCenter, 0), Point2f(mFrameCenter, 225), Scalar(255, 0, 0), 3);
 }
 
-void RoadTracer::Show(bool enable)
+
+void RoadTracer::Show()
 {
-	if (!enable)
+	if (!mVideoShow)
 		return;
 
-	namedWindow("orignal", WINDOW_NORMAL);
-	imshow("orignal", mFrameColor);
+	namedWindow("Edge", WINDOW_AUTOSIZE);
+	imshow("Edge", mFrameEdge);
 
-	namedWindow("Perspective", WINDOW_NORMAL);
-	imshow("Perspective", mFramePerspective);
-
-	namedWindow("Final", WINDOW_NORMAL);
-	imshow("Final", mFrameFinal);
+	namedWindow("Center", WINDOW_AUTOSIZE);
+	imshow("Center", mFrameEdgeCenter);
 }
 
-Direction RoadTracer::Main(Mat& frame)
+
+void RoadTracer::Calculate()
 {
-	mDirection = Direction::Forward;
-
-	frame.copyTo(mFrameColor);
-
-	Preprocess();
-	Test(true);
-	Threshold();
-	Histrogram();
-	LaneFinder();
-	LaneCenter();
-	Show(true);
-
 	bool horizon = false;
 	mExit = false;
 	double theta;
@@ -182,11 +167,11 @@ Direction RoadTracer::Main(Mat& frame)
 				{
 					if (0.6 <= theta && theta <= 1.0)
 					{
-						mDirection = Direction::Right90;
+						mDirection = Direction::RightTurn;
 					}
 					else if (2.2 <= theta && theta <= 2.6)
 					{
-						mDirection = Direction::Left90;
+						mDirection = Direction::LeftTurn;
 					}
 
 					mExit = true;
@@ -201,40 +186,40 @@ Direction RoadTracer::Main(Mat& frame)
 		int xPos = mLaneCenter - mFrameCenter;
 
 		if (xPos < -20)
-			mDirection = Direction::Left;
+			mDirection = Direction::LeftCorrection;
 
 		else if (xPos > 20)
-			mDirection = Direction::Right;
+			mDirection = Direction::RightCorrection;
 
 		else
 			mDirection = Direction::Forward;
 	}
+}
 
-	switch (mDirection)
-	{
-	case Direction::Left:
-		cout << "Left\n";
-		break;
-	case Direction::Right:
-		cout << "Right\n";
-		break;
-	case Direction::Left90:
-		cout << "Left90\n";
-		break;
-	case Direction::Right90:
-		cout << "Right90\n";
-		break;
-	case Direction::Forward:
-		cout << "Forward\n";
-		break;
-	}
-
-	return mDirection;
+void RoadTracer::DebugMode(bool videoShow, bool imageTest)
+{
+	mVideoShow = videoShow;
+	mImageTest = imageTest;
 }
 
 
+Direction RoadTracer::Main(Mat& frameOriginal, Mat& frameFinal)
+{
+	mDirection = Direction::Forward;
 
+	frameOriginal.copyTo(mFrameOriginal);
+	mFrameFinal = frameFinal;
 
+	Preprocess();
+	Threshold();
+	Histrogram();
+	LaneFinder();
+	LaneCenter();
+	Calculate();
+	Show();
+
+	return mDirection;
+}
 
 
 RoadTracer* RoadTracer::sInstance = nullptr;
