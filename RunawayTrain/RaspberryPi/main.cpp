@@ -1,10 +1,10 @@
-#define MOTOR
+#define MOTORCONTROLLER
 // TEMP
 // LINETRACER
 // WINDOWSCAPTURE
 // LIGHT
 // TEMPLATEMATCHING
-// MOTOR
+// MOTORCONTROLLER
 // DETECTCIRCLE
 
 
@@ -23,13 +23,12 @@ int main(int argc, char** argv)
 
 #endif
 
-#ifdef MOTOR
-#include "Motor.h"
+#ifdef MOTORCONTROLLER
+#include "MotorController.h"
 
 int main(void)
 {
-	Motor motor;
-	motor.Test();
+	MotorController::Instance()->Test();
 }
 
 #endif

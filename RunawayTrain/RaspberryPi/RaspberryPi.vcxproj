@@ -18,10 +18,22 @@
       <Platform>ARM64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="LineTracer.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MotorController.cpp" />
+    <ClCompile Include="pwm.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="MotorController.h" />
+    <ClInclude Include="Temp.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{776ec306-491a-481b-880e-65da359be484}</ProjectGuid>
+    <ProjectGuid>{75342e34-e9cd-4413-970d-683aa2740b41}</ProjectGuid>
     <Keyword>Linux</Keyword>
-    <RootNamespace>Linux</RootNamespace>
+    <RootNamespace>RaspberryPi</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <ApplicationType>Linux</ApplicationType>
     <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
@@ -52,7 +64,7 @@
     </Link>
     <RemotePostBuildEvent>
       <Command>gpio export 17 out</Command>
-      <Message>export pin 17 using the gpio utility so that we can execute the blink program without sudo</Message>
+      <Message>sudo 없이 깜박임 프로그램을 실행할 수 있도록 GPIO 유틸리티를 사용하여 핀 17을 내보내세요.</Message>
     </RemotePostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -60,21 +72,12 @@
       <LibraryDependencies>wiringPi</LibraryDependencies>
     </Link>
     <RemotePostBuildEvent>
-      <Command>gpio export 17 out</Command>
-      <Message>export pin 17 using the gpio utility so that we can execute the blink program without sudo</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </RemotePostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="LineTracer.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Motor.cpp" />
-    <ClCompile Include="Motor.h" />
-    <ClCompile Include="pwm.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Config.h" />
-    <ClInclude Include="Temp.h" />
-  </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

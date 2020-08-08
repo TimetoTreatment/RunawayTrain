@@ -1,4 +1,6 @@
-#include "Motor.h"
+#include "MotorController.h"
+
+MotorController* MotorController::sInstance = nullptr;
 
 using namespace std;
 
@@ -6,7 +8,7 @@ using namespace std;
 
 
 
-Motor::Motor()
+MotorController::MotorController()
 {
 	wiringPiSetup();
 
@@ -23,7 +25,7 @@ Motor::Motor()
 	digitalWrite(mLeft1, LOW);
 }
 
-Motor::~Motor()
+MotorController::~MotorController()
 {
 	digitalWrite(mLeft0, LOW);
 	digitalWrite(mLeft1, LOW);
@@ -39,36 +41,36 @@ Motor::~Motor()
 	Low   Low   |  Stop
 */
 
-void Motor::Control(MotorControl motorControl)
+void MotorController::Control(MotorStatus motorStatus)
 {
-	switch (motorControl)
+	switch (motorStatus)
 	{
-	case MotorControl::LeftForward:
+	case MotorStatus::LeftForward:
 		digitalWrite(mLeft0, HIGH);
 		digitalWrite(mLeft1, LOW);
 		break;
 
-	case MotorControl::LeftReverse:
+	case MotorStatus::LeftReverse:
 		digitalWrite(mLeft0, LOW);
 		digitalWrite(mLeft1, HIGH);
 		break;
 
-	case MotorControl::LeftStop:
+	case MotorStatus::LeftStop:
 		digitalWrite(mLeft0, LOW);
 		digitalWrite(mLeft1, LOW);
 		break;
 
-	case MotorControl::RightForward:
-		digitalWrite(mRight0, HIGH);
-		digitalWrite(mRight1, LOW);
-		break;
-
-	case MotorControl::RightReverse:
+	case MotorStatus::RightForward:
 		digitalWrite(mRight0, LOW);
 		digitalWrite(mRight1, HIGH);
 		break;
 
-	case MotorControl::RightStop:
+	case MotorStatus::RightReverse:
+		digitalWrite(mRight0, HIGH);
+		digitalWrite(mRight1, LOW);
+		break;
+
+	case MotorStatus::RightStop:
 		digitalWrite(mRight0, LOW);
 		digitalWrite(mRight1, LOW);
 		break;
@@ -76,12 +78,12 @@ void Motor::Control(MotorControl motorControl)
 }
 
 
-void Motor::Speed(char side, int percentage)
+void MotorController::Speed(char side, int percentage)
 {
-	if (side == 'L')
+	if (side == 'l')
 		softPwmWrite(mLeftPwm, percentage);
 
-	else if (side == 'R')
+	else if (side == 'r')
 		softPwmWrite(mRightPwm, percentage);
 
 	else
@@ -92,7 +94,7 @@ void Motor::Speed(char side, int percentage)
 }
 
 
-void Motor::Test()
+void MotorController::Test()
 {
 	int speed;
 	string userControl;
@@ -117,16 +119,16 @@ void Motor::Test()
 		}
 
 		else if (userControl == "lf" || userControl == "leftforward")
-			Control(MotorControl::LeftForward);
+			Control(MotorStatus::LeftForward);
 		else if (userControl == "lr" || userControl == "leftreverse")
-			Control(MotorControl::LeftReverse);
+			Control(MotorStatus::LeftReverse);
 		else if (userControl == "ls" || userControl == "leftstop")
-			Control(MotorControl::LeftStop);
+			Control(MotorStatus::LeftStop);
 		else if (userControl == "rf" || userControl == "rightforward")
-			Control(MotorControl::RightForward);
+			Control(MotorStatus::RightForward);
 		else if (userControl == "rr" || userControl == "rightreverse")
-			Control(MotorControl::RightReverse);
+			Control(MotorStatus::RightReverse);
 		else if (userControl == "rs" || userControl == "rightstop")
-			Control(MotorControl::RightStop);
+			Control(MotorStatus::RightStop);
 	}
 }
