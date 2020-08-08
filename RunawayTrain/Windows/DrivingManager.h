@@ -81,6 +81,13 @@ public:
 
 			switch (mDirection)
 			{
+			case Direction::Forward:
+				mMotorController->Control(MotorStatus::LeftForward);
+				mMotorController->Control(MotorStatus::RightForward);
+				mMotorController->Speed('l', mLeftSpeed);
+				mMotorController->Speed('r', mRightSpeed);
+				break;
+
 			case Direction::Left:
 				mMotorController->Control(MotorStatus::LeftForward);
 				mMotorController->Control(MotorStatus::RightForward);
@@ -117,7 +124,7 @@ public:
 
 			cout << (int)(1 / mLoopTimer.GetElapsedTime()) << "\n";
 
-			switch (waitKey(1))
+			switch (waitKey(0))
 			{
 			case 27:
 				mExit = true;
