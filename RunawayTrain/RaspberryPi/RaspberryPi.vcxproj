@@ -20,15 +20,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
-    <ClCompile Include="LineTracer.cpp" />
+    <ClCompile Include="DrivingManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MotorController.cpp" />
     <ClCompile Include="pwm.cpp" />
+    <ClCompile Include="RoadTracer.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="DrivingManager.h" />
     <ClInclude Include="MotorController.h" />
+    <ClInclude Include="RoadTracer.h" />
     <ClInclude Include="Temp.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{75342e34-e9cd-4413-970d-683aa2740b41}</ProjectGuid>
@@ -78,7 +83,11 @@
       </Message>
     </RemotePostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <Link />
+    <ClCompile />
+    <Link />
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

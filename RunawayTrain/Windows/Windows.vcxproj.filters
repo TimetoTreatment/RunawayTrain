@@ -13,6 +13,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="OnlyWindows">
+      <UniqueIdentifier>{ffbec8c5-50b6-4cae-89bd-961f07ba327f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -36,9 +39,6 @@
     <ClCompile Include="Config.cpp">
       <Filter>_Sourece</Filter>
     </ClCompile>
-    <ClCompile Include="MotorController.cpp">
-      <Filter>_Sourece</Filter>
-    </ClCompile>
     <ClCompile Include="DrivingManager.cpp">
       <Filter>_Sourece</Filter>
     </ClCompile>
@@ -47,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>_Sourece</Filter>
+    </ClCompile>
+    <ClCompile Include="MotorController.cpp">
+      <Filter>OnlyWindows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,9 +77,6 @@
     <ClInclude Include="Config.h">
       <Filter>_Sourece</Filter>
     </ClInclude>
-    <ClInclude Include="MotorController.h">
-      <Filter>_Sourece</Filter>
-    </ClInclude>
     <ClInclude Include="DrivingManager.h">
       <Filter>_Sourece</Filter>
     </ClInclude>
@@ -88,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>_Sourece</Filter>
+    </ClInclude>
+    <ClInclude Include="MotorController.h">
+      <Filter>OnlyWindows</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

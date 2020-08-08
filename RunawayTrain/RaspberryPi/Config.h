@@ -1,4 +1,5 @@
 #pragma once
+#define RASPBERRYPI
 #include <string>
 
 using namespace std;
@@ -22,6 +23,5 @@ enum class Direction
 	LeftTurn,
 	RightTurn,
 };
-
 
 string DirectionStr(Direction direction);

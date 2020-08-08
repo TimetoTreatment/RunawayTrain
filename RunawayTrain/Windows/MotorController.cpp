@@ -43,34 +43,34 @@ MotorController::~MotorController()
 
 void MotorController::Control(MotorStatus motorStatus)
 {
-	//switch (motorControl)
+	//switch (motorStatus)
 	//{
-	//case MotorControl::LeftForward:
+	//case MotorStatus::LeftForward:
 	//	digitalWrite(mLeft0, HIGH);
 	//	digitalWrite(mLeft1, LOW);
 	//	break;
 
-	//case MotorControl::LeftReverse:
+	//case MotorStatus::LeftReverse:
 	//	digitalWrite(mLeft0, LOW);
 	//	digitalWrite(mLeft1, HIGH);
 	//	break;
 
-	//case MotorControl::LeftStop:
+	//case MotorStatus::LeftStop:
 	//	digitalWrite(mLeft0, LOW);
 	//	digitalWrite(mLeft1, LOW);
 	//	break;
 
-	//case MotorControl::RightForward:
-	//	digitalWrite(mRight0, HIGH);
-	//	digitalWrite(mRight1, LOW);
-	//	break;
-
-	//case MotorControl::RightReverse:
+	//case MotorStatus::RightForward:
 	//	digitalWrite(mRight0, LOW);
 	//	digitalWrite(mRight1, HIGH);
 	//	break;
 
-	//case MotorControl::RightStop:
+	//case MotorStatus::RightReverse:
+	//	digitalWrite(mRight0, HIGH);
+	//	digitalWrite(mRight1, LOW);
+	//	break;
+
+	//case MotorStatus::RightStop:
 	//	digitalWrite(mRight0, LOW);
 	//	digitalWrite(mRight1, LOW);
 	//	break;
@@ -118,17 +118,17 @@ void MotorController::Test()
 			Speed('r', speed);
 		}
 
-		//else if (userControl == "lf" || userControl == "leftforward")
-		//	Control(MotorControl::LeftForward);
-		//else if (userControl == "lr" || userControl == "leftreverse")
-		//	Control(MotorControl::LeftReverse);
-		//else if (userControl == "ls" || userControl == "leftstop")
-		//	Control(MotorControl::LeftStop);
-		//else if (userControl == "rf" || userControl == "rightforward")
-		//	Control(MotorControl::RightForward);
-		//else if (userControl == "rr" || userControl == "rightreverse")
-		//	Control(MotorControl::RightReverse);
-		//else if (userControl == "rs" || userControl == "rightstop")
-		//	Control(MotorControl::RightStop);
+		else if (userControl == "lf" || userControl == "leftforward")
+			Control(MotorStatus::LeftForward);
+		else if (userControl == "lr" || userControl == "leftreverse")
+			Control(MotorStatus::LeftReverse);
+		else if (userControl == "ls" || userControl == "leftstop")
+			Control(MotorStatus::LeftStop);
+		else if (userControl == "rf" || userControl == "rightforward")
+			Control(MotorStatus::RightForward);
+		else if (userControl == "rr" || userControl == "rightreverse")
+			Control(MotorStatus::RightReverse);
+		else if (userControl == "rs" || userControl == "rightstop")
+			Control(MotorStatus::RightStop);
 	}
 }

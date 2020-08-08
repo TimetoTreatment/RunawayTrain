@@ -11,7 +11,7 @@ int main(void)
 #endif
 
 #if TEST
-#define TEMPLATEMATCHING
+#define TEMP
 // DRIVINGMANAGER
 // TEMP
 // ROADTRACER
