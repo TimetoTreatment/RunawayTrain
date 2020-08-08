@@ -19,12 +19,12 @@ private:
 
 	float mXMarginTop = 100;	// 267
 	float mXMarginBottom = 0;	// 66
-	float mYPos = 360;			// 480
-	float mYSize = 360;			// 66
+	float mYPos = 240;			// 480
+	float mYSize = 240;			// 66
 
 	Point2f mSrcROI[4] = {
-		{mXMarginTop,mYPos}, {1280 - mXMarginTop,mYPos},
-		{mXMarginBottom, mYPos + mYSize}, {1280 - mXMarginBottom, mYPos + mYSize}
+		{mXMarginTop,mYPos}, {720 - mXMarginTop,mYPos},
+		{mXMarginBottom, mYPos + mYSize}, {720 - mXMarginBottom, mYPos + mYSize}
 	};
 
 	Point2f mDstROI[4] = {

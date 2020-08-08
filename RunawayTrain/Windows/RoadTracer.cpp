@@ -17,8 +17,8 @@ void RoadTracer::Threshold()
 	cvtColor(mFramePerspective, mFramePerspective, COLOR_BGR2GRAY);
 	GaussianBlur(mFramePerspective, mFramePerspective, Size(7, 7), 0, 0);
 	threshold(mFramePerspective, mFramePerspective, 80, 255, THRESH_BINARY);
-	Canny(mFramePerspective, mFrameEdge, 50, 150, 3, false);
-	HoughLines(mFrameEdge, mLines, 1, 1 * CV_PI / 180, 80);
+	Canny(mFramePerspective, mFrameEdge, 50, 100, 3, false);
+	HoughLines(mFrameEdge, mLines, 1, 1 * CV_PI / 180, 75);
 	cvtColor(mFrameEdge, mFrameEdge, COLOR_GRAY2BGR);
 
 	float rho, theta;

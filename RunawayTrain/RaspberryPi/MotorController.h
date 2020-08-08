@@ -39,7 +39,7 @@ public:
 	void Speed(char side, int percentage);
 
 	/* Å×½ºÆ® */
-	void Test(){}
+	void Test();
 
 
 private:

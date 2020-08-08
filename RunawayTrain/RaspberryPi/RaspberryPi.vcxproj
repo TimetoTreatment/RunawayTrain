@@ -23,7 +23,6 @@
     <ClCompile Include="DrivingManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MotorController.cpp" />
-    <ClCompile Include="pwm.cpp" />
     <ClCompile Include="RoadTracer.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>

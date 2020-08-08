@@ -13,7 +13,7 @@ class DrivingManager
 private:
 
 	bool mDebugProcessShow = true;
-	bool mDebugImageTest = false;
+	bool mDebugImageTest = true;
 
 	RoadTracer* mRoadTracer = RoadTracer::Instance();
 	MotorController* mMotorController = MotorController::Instance();
@@ -62,11 +62,14 @@ private:
 		if (!mDebugImageTest)
 		{
 			mCapture.read(mFrameOrigianl);
+
+#ifdef WINDOWS
 			if (mFrameOrigianl.empty())
 			{
 				cout << "Error : DrivingManager::Preprocess";
 				exit(-1);
 			}
+#endif
 		}
 		else
 		{
@@ -98,7 +101,9 @@ private:
 			testCase++;
 		}
 
-		resize(mFrameOrigianl, mFrameOrigianl, { 1280, 720 });
+#ifdef WINDOWS
+		resize(mFrameOrigianl, mFrameOrigianl, { 640, 480 });
+#endif
 		mFrameOrigianl.copyTo(mFrameFinal);
 	}
 
@@ -169,7 +174,7 @@ public:
 			}
 
 			putText(mFrameFinal,
-				to_string(int(1 / mLoopTimer.GetElapsedTime())), { 1200,40 },
+				to_string(int(1 / mLoopTimer.GetElapsedTime())), { 600,40 },
 				FONT_HERSHEY_DUPLEX, 1, Scalar(0, 255, 0), 1);
 
 			putText(mFrameFinal,
