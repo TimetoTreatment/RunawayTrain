@@ -164,7 +164,6 @@
     <ClInclude Include="DetectCircle.h" />
     <ClInclude Include="ExtractRect.h" />
     <ClInclude Include="MotorController.h" />
-    <ClInclude Include="Light.h" />
     <ClInclude Include="DrivingManager.h" />
     <ClInclude Include="RoadTracer.h" />
     <ClInclude Include="Region.h" />

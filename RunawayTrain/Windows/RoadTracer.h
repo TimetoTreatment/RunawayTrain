@@ -38,7 +38,7 @@ private:
 	vector<int> mHistrogramLane;
 	int mLeftLanePos, mRightLanePos, mFrameCenter, mLaneCenter;
 
-	Direction mDirection;
+	Direction* mDirection;
 	bool mExit;
 
 	void Preprocess();
@@ -60,7 +60,7 @@ public:
 
 	void DebugMode(bool debugProcessShow = true, bool debugImageTest = false);
 
-	Direction Main(Mat& frameOriginal, Mat& frameFinal);
+	void Main(Mat& frameOriginal, Mat& frameFinal, Direction* direction);
 
 
 private:

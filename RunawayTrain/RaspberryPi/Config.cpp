@@ -1,6 +1,6 @@
 #include "Config.h"
 
-string DirectionStr(Direction direction)
+std::string DirectionStr(Direction direction)
 {
 	switch (direction)
 	{

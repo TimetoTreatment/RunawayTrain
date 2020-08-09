@@ -1,8 +1,6 @@
 #pragma once
-#define WINDOWS
 #include <string>
 
-using namespace std;
 
 enum class MotorStatus
 {
@@ -11,8 +9,9 @@ enum class MotorStatus
 	LeftStop,
 	RightForward,
 	RightReverse,
-	RightStop,
+	RightStop
 };
+
 
 enum class Direction
 {
@@ -21,7 +20,14 @@ enum class Direction
 	LeftCorrection,
 	RightCorrection,
 	LeftTurn,
-	RightTurn,
+	RightTurn
 };
 
-string DirectionStr(Direction direction);
+std::string DirectionStr(Direction direction);
+
+
+enum class Machine
+{
+	Windows,
+	RaspberryPi
+};

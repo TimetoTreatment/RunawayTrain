@@ -59,9 +59,6 @@
     <ClInclude Include="DetectCircle.h">
       <Filter>Test</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Test</Filter>
-    </ClInclude>
     <ClInclude Include="Region.h">
       <Filter>Test</Filter>
     </ClInclude>

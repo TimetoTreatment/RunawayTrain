@@ -15,7 +15,6 @@ void RoadTracer::Preprocess()
 void RoadTracer::Threshold()
 {
 	cvtColor(mFramePerspective, mFramePerspective, COLOR_BGR2GRAY);
-	GaussianBlur(mFramePerspective, mFramePerspective, Size(7, 7), 0, 0);
 	threshold(mFramePerspective, mFramePerspective, 80, 255, THRESH_BINARY);
 	Canny(mFramePerspective, mFrameEdge, 50, 100, 3, false);
 	HoughLines(mFrameEdge, mLines, 1, 1 * CV_PI / 180, 75);
@@ -136,11 +135,11 @@ void RoadTracer::Calculate()
 				{
 					if (0.39 <= theta && theta <= 1.18)
 					{
-						mDirection = Direction::RightTurn;
+						*mDirection = Direction::RightTurn;
 					}
 					else if (1.96 <= theta && theta <= 2.75)
 					{
-						mDirection = Direction::LeftTurn;
+						*mDirection = Direction::LeftTurn;
 					}
 
 					mExit = true;
@@ -155,13 +154,13 @@ void RoadTracer::Calculate()
 		int xPos = mLaneCenter - mFrameCenter;
 
 		if (xPos < -20)
-			mDirection = Direction::LeftCorrection;
+			*mDirection = Direction::LeftCorrection;
 
 		else if (xPos > 20)
-			mDirection = Direction::RightCorrection;
+			*mDirection = Direction::RightCorrection;
 
 		else
-			mDirection = Direction::Forward;
+			*mDirection = Direction::Forward;
 	}
 }
 
@@ -172,9 +171,9 @@ void RoadTracer::DebugMode(bool debugProcessShow, bool debugImageTest)
 }
 
 
-Direction RoadTracer::Main(Mat& frameOriginal, Mat& frameFinal)
+void RoadTracer::Main(Mat& frameOriginal, Mat& frameFinal, Direction* direction)
 {
-	mDirection = Direction::Forward;
+	mDirection = direction;
 
 	frameOriginal.copyTo(mFrameOriginal);
 	mFrameFinal = frameFinal;
@@ -186,8 +185,6 @@ Direction RoadTracer::Main(Mat& frameOriginal, Mat& frameFinal)
 	LaneCenter();
 	Calculate();
 	Show();
-
-	return mDirection;
 }
 
 
