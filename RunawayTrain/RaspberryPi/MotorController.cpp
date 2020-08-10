@@ -3,9 +3,7 @@
 MotorController* MotorController::sInstance = nullptr;
 
 using namespace std;
-
-
-
+using namespace cv;
 
 
 MotorController::MotorController()
@@ -96,39 +94,58 @@ void MotorController::Speed(char side, int percentage)
 
 void MotorController::Test()
 {
-	int speed;
-	string userControl;
+	bool Exit = false;
 
-	for (;;)
+	int leftspeed = 100;
+	int rightspeed = 75;
+
+	VideoCapture cap(0);
+	Mat frame;
+
+	for (; !Exit;)
 	{
-		cin >> userControl;
+		cap.read(frame);
 
-		if (userControl == "exit")
+		Speed('l', leftspeed);
+		Speed('r', rightspeed);
+
+		// 2490368 UP
+		// 2621440 DOWN
+		// 2424832 LEFT
+		// 2555904 RIGHT
+
+		switch (waitKey(1))
+		{
+		case 'w':
+			Control(MotorStatus::LeftForward);
+			Control(MotorStatus::RightForward);
 			break;
 
-		else if (userControl == "leftspeed")
-		{
-			cin >> speed;
-			Speed('l', speed);
-		}
-
-		else if (userControl == "rightspeed")
-		{
-			cin >> speed;
-			Speed('r', speed);
-		}
-
-		else if (userControl == "lf" || userControl == "leftforward")
-			Control(MotorStatus::LeftForward);
-		else if (userControl == "lr" || userControl == "leftreverse")
+		case 's':
 			Control(MotorStatus::LeftReverse);
-		else if (userControl == "ls" || userControl == "leftstop")
-			Control(MotorStatus::LeftStop);
-		else if (userControl == "rf" || userControl == "rightforward")
-			Control(MotorStatus::RightForward);
-		else if (userControl == "rr" || userControl == "rightreverse")
 			Control(MotorStatus::RightReverse);
-		else if (userControl == "rs" || userControl == "rightstop")
+			break;
+
+		case 'a':
+			Control(MotorStatus::LeftStop);
+			Control(MotorStatus::RightForward);
+			break;
+
+		case 'd':
+			Control(MotorStatus::LeftForward);
 			Control(MotorStatus::RightStop);
+			break;
+
+		case 'e':
+			Control(MotorStatus::LeftStop);
+			Control(MotorStatus::RightStop);
+			break;
+
+		case 27:
+			Exit = true;
+			break;
+		}
+
+		imshow("frame", frame);
 	}
 }

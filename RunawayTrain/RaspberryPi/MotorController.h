@@ -2,6 +2,7 @@
 #include <wiringPi.h>
 #include <softPwm.h>
 #include "Config.h"
+#include "opencv2/opencv.hpp"
 
 using namespace std;
 

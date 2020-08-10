@@ -11,35 +11,18 @@ private:
 public:
 	int Main()
 	{
-		double rho, theta;
-		Point pt1, pt2;
-		double cosTheta, sinTheta;
-		double x0, y0;
-		Mat edge = imread("assets/image/roadtest3.png");
-
-		theta = 0;
+		Mat frame(500, 500, CV_32FC3, Scalar(0,0,255));
+		int key;
 
 		for (;;)
 		{
-			cout << theta << endl;
+			namedWindow("input",WINDOW_NORMAL);
+			
+			imshow("input", frame);
 
-			rho = 200;
-			cosTheta = cos(theta);
-			sinTheta = sin(theta);
-			x0 = cosTheta * rho;
-			y0 = sinTheta * rho;
-			pt1.x = cvRound(x0 + 1000 * (-sinTheta));
-			pt1.y = cvRound(y0 + 1000 * (cosTheta));
-			pt2.x = cvRound(x0 - 1000 * (-sinTheta));
-			pt2.y = cvRound(y0 - 1000 * (cosTheta));
+			key = waitKeyEx(0);
 
-			line(edge, pt1, pt2, Scalar(0, 0, 255), 3, LINE_AA);
-
-			theta = (theta + 0.05);
-
-
-			imshow("asdf", edge);
-			waitKey(0);
+			cout << key << " : " << (char)key << endl;
 		}
 
 
