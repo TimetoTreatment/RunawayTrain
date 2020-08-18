@@ -6,12 +6,12 @@ using namespace std;
 
 enum class MotorStatus
 {
-	LeftForward,
-	LeftReverse,
-	LeftStop,
-	RightForward,
-	RightReverse,
-	RightStop,
+	Forward,
+	Reverse,
+	Stop,
+	Left,
+	Right,
+	Center
 };
 
 enum class Direction

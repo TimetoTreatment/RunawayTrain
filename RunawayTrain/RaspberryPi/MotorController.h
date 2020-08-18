@@ -11,15 +11,15 @@ class MotorController
 {
 private:
 
-	/* 좌측 다리, 우측 모터 */
-	const int mLeft0 = 27;
-	const int mLeft1 = 28;
-	const int mLeftPwm = 29;
+	/* 조향 모터 */
+	const int mPinSteer0 = 27;
+	const int mPinSteer1 = 28;
+	const int mPinSteerPwm = 29;
 
-	/* 우측 다리, 좌측 모터 */
-	const int mRight0 = 24;
-	const int mRight1 = 25;
-	const int mRightPwm = 23;
+	/* 주행 모터 */
+	const int mPinDrive0 = 23;
+	const int mPinDrive1 = 24;
+	const int mPinDrivePwm = 25;
 
 	MotorController();
 	~MotorController();

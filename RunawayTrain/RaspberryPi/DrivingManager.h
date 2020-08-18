@@ -132,45 +132,7 @@ public:
 
 			switch (mDirection)
 			{
-			case Direction::Forward:
-				mMotorController->Control(MotorStatus::LeftForward);
-				mMotorController->Control(MotorStatus::RightForward);
-				mMotorController->Speed('l', mLeftSpeed);
-				mMotorController->Speed('r', mRightSpeed);
-				break;
 
-			case Direction::LeftCorrection:
-				mMotorController->Control(MotorStatus::LeftForward);
-				mMotorController->Control(MotorStatus::RightForward);
-				mMotorController->Speed('l', mLeftSpeed / 2);
-				mMotorController->Speed('r', mRightSpeed);
-				break;
-
-			case Direction::RightCorrection:
-				mMotorController->Control(MotorStatus::LeftForward);
-				mMotorController->Control(MotorStatus::RightForward);
-				mMotorController->Speed('l', mLeftSpeed);
-				mMotorController->Speed('r', mRightSpeed / 2);
-				break;
-
-			case Direction::LeftTurn:
-				mMotorController->Control(MotorStatus::LeftStop);
-				mMotorController->Control(MotorStatus::RightForward);
-				// delay(2000);
-				break;
-
-			case Direction::RightTurn:
-				mMotorController->Control(MotorStatus::RightStop);
-				mMotorController->Control(MotorStatus::LeftForward);
-				// delay(2000);
-				break;
-
-			case Direction::Stop:
-				mMotorController->Control(MotorStatus::RightStop);
-				mMotorController->Control(MotorStatus::LeftStop);
-				// delay(6000);
-				mStopTimer.Reset();
-				break;
 			}
 
 			putText(mFrameFinal,

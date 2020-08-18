@@ -10,25 +10,30 @@ MotorController::MotorController()
 {
 	wiringPiSetup();
 
-	pinMode(mLeft0, OUTPUT);
-	pinMode(mLeft1, OUTPUT);
-	pinMode(mRight0, OUTPUT);
-	pinMode(mRight1, OUTPUT);
-	pinMode(mLeftPwm, OUTPUT);
-	pinMode(mRightPwm, OUTPUT);
-	softPwmCreate(mLeftPwm, 0, 100);
-	softPwmCreate(mRightPwm, 0, 100);
+	pinMode(mPinSteer0, OUTPUT);
+	pinMode(mPinSteer1, OUTPUT);
+	pinMode(mPinSteerPwm, OUTPUT);
 
-	digitalWrite(mLeft0, LOW);
-	digitalWrite(mLeft1, LOW);
+	pinMode(mPinDrive0, OUTPUT);
+	pinMode(mPinDrive1, OUTPUT);
+	pinMode(mPinDrivePwm, OUTPUT);
+
+	softPwmCreate(mPinSteerPwm, 0, 100);
+	softPwmCreate(mPinDrivePwm, 0, 100);
+
+	digitalWrite(mPinSteer0, LOW);
+	digitalWrite(mPinSteer1, LOW);
+
+	digitalWrite(mPinDrive0, LOW);
+	digitalWrite(mPinDrive1, LOW);
 }
 
 MotorController::~MotorController()
 {
-	digitalWrite(mLeft0, LOW);
-	digitalWrite(mLeft1, LOW);
-	digitalWrite(mRight0, LOW);
-	digitalWrite(mRight1, LOW);
+	digitalWrite(mPinSteer0, LOW);
+	digitalWrite(mPinSteer1, LOW);
+	digitalWrite(mPinDrive0, LOW);
+	digitalWrite(mPinDrive1, LOW);
 }
 
 /*
@@ -43,34 +48,34 @@ void MotorController::Control(MotorStatus motorStatus)
 {
 	switch (motorStatus)
 	{
-	case MotorStatus::LeftForward:
-		digitalWrite(mLeft0, HIGH);
-		digitalWrite(mLeft1, LOW);
+	case MotorStatus::Forward:
+		digitalWrite(mPinDrive0, HIGH);
+		digitalWrite(mPinDrive1, LOW);
 		break;
 
-	case MotorStatus::LeftReverse:
-		digitalWrite(mLeft0, LOW);
-		digitalWrite(mLeft1, HIGH);
+	case MotorStatus::Reverse:
+		digitalWrite(mPinDrive0, LOW);
+		digitalWrite(mPinDrive1, HIGH);
 		break;
 
-	case MotorStatus::LeftStop:
-		digitalWrite(mLeft0, LOW);
-		digitalWrite(mLeft1, LOW);
+	case MotorStatus::Stop:
+		digitalWrite(mPinDrive0, LOW);
+		digitalWrite(mPinDrive1, LOW);
 		break;
 
-	case MotorStatus::RightForward:
-		digitalWrite(mRight0, LOW);
-		digitalWrite(mRight1, HIGH);
+	case MotorStatus::Left:
+		digitalWrite(mPinSteer0, LOW);
+		digitalWrite(mPinSteer1, HIGH);
 		break;
 
-	case MotorStatus::RightReverse:
-		digitalWrite(mRight0, HIGH);
-		digitalWrite(mRight1, LOW);
+	case MotorStatus::Right:
+		digitalWrite(mPinSteer0, HIGH);
+		digitalWrite(mPinSteer1, LOW);
 		break;
 
-	case MotorStatus::RightStop:
-		digitalWrite(mRight0, LOW);
-		digitalWrite(mRight1, LOW);
+	case MotorStatus::Center:
+		digitalWrite(mPinSteer0, LOW);
+		digitalWrite(mPinSteer1, LOW);
 		break;
 	}
 }
@@ -78,11 +83,11 @@ void MotorController::Control(MotorStatus motorStatus)
 
 void MotorController::Speed(char side, int percentage)
 {
-	if (side == 'l')
-		softPwmWrite(mLeftPwm, percentage);
+	if (side == 's')
+		softPwmWrite(mPinSteerPwm, percentage);
 
-	else if (side == 'r')
-		softPwmWrite(mRightPwm, percentage);
+	else if (side == 'd')
+		softPwmWrite(mPinDrivePwm, percentage);
 
 	else
 	{
@@ -96,18 +101,23 @@ void MotorController::Test()
 {
 	bool Exit = false;
 
-	int leftspeed = 100;
-	int rightspeed = 75;
+	int steerSpeed = 70;
+	int driveSpeed = 100;
 
 	VideoCapture cap(0);
 	Mat frame;
 
-	for (; !Exit;)
+	cap.set(CAP_PROP_BRIGHTNESS, 50);
+
+	Speed('s', steerSpeed);
+	Speed('d', driveSpeed);
+
+	int n = 0;
+
+	for (; !Exit;n++)
 	{
 		cap.read(frame);
-
-		Speed('l', leftspeed);
-		Speed('r', rightspeed);
+		rotate(frame, frame, ROTATE_90_CLOCKWISE);
 
 		// 2490368 UP
 		// 2621440 DOWN
@@ -117,28 +127,27 @@ void MotorController::Test()
 		switch (waitKey(1))
 		{
 		case 'w':
-			Control(MotorStatus::LeftForward);
-			Control(MotorStatus::RightForward);
+			Control(MotorStatus::Forward);
 			break;
 
 		case 's':
-			Control(MotorStatus::LeftReverse);
-			Control(MotorStatus::RightReverse);
+			Control(MotorStatus::Reverse);
 			break;
 
 		case 'a':
-			Control(MotorStatus::LeftStop);
-			Control(MotorStatus::RightForward);
+			Control(MotorStatus::Left);
 			break;
 
 		case 'd':
-			Control(MotorStatus::LeftForward);
-			Control(MotorStatus::RightStop);
+			Control(MotorStatus::Right);
 			break;
 
-		case 'e':
-			Control(MotorStatus::LeftStop);
-			Control(MotorStatus::RightStop);
+		case ' ':
+			Control(MotorStatus::Stop);
+			break;
+
+		case 'c':
+			Control(MotorStatus::Center);
 			break;
 
 		case 27:
@@ -147,5 +156,7 @@ void MotorController::Test()
 		}
 
 		imshow("frame", frame);
+
+		cout << "frame : " << n << endl;
 	}
 }
