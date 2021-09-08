@@ -18,7 +18,7 @@ int main()
 
 	for (;;)
 	{
-		switch (tcp->WaitEvent())
+		switch (tcp->WaitEvent(0))
 		{
 		case TCP::WaitEventType::NEWCLIENT:
 			tcp->AddClient();
@@ -27,19 +27,17 @@ int main()
 
 		case TCP::WaitEventType::MESSAGE:
 
-			if (string(tcp->ReadMessage()) == "START")
+			if (string(tcp->ReadMessage()).find("START") != string::npos)
 			{
-				tcp->WaitEvent();
 
-				size = atoi(tcp->ReadMessage());
 
-				tcp->WaitEvent();
-				Mat image(Size(1920, 1080), CV_8UC3, (char*)tcp->ReadBuffer(size));
+				Mat image(Size(1920, 1080), CV_8UC3, (char*)tcp->ReadBuffer(6220800));
+
 
 				imshow("mat", image);
 
-				waitKey(0);
-				destroyAllWindows();
+				waitKey(1);
+				tcp->Send("READY", 6);
 			}
 
 			break;

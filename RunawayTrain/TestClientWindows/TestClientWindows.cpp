@@ -15,12 +15,26 @@ int main()
 
 	tcp->WaitEvent(); // ACCEPT
 
+	int current = 1;
+	Mat img1 = imread("1.png");
+	Mat img2 = imread("2.png");
+	Mat img3 = imread("3.png");
+	Mat img;
+
 	for (;;)
 	{
-		string filename;
-		cin >> filename;
+		if (current == 1)
+			img = img1;
+		else if (current == 2)
+			img = img2;
+		else if (current == 3)
+			img = img3;
 
-		Mat img = imread(filename + ".png");
+		current++;
+
+		if (current == 4)
+			current = 1;
+		
 		if (img.empty())
 		{
 			cout << "img.empty()" << endl;
@@ -32,6 +46,8 @@ int main()
 		tcp->Send("START", 6);
 		tcp->Send("6220800", 8);
 		tcp->Send((const char*)img.data, size);
+
+		waitKey(1);
 	}
 
 	return 0;

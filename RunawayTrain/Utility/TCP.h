@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <thread>
 
 #pragma comment (lib, "ws2_32.lib")
 
@@ -30,7 +31,7 @@ public:
 	TCP(std::string port, std::string targetIP = "0.0.0.0");
 	~TCP();
 
-	WaitEventType WaitEvent(int timeoutMicroSecond = -1);
+	WaitEventType WaitEvent(int timeoutMilliseconds = -1);
 
 	void Send(const char* message, int size, SendTo sendTo = SendTo::EVENT_SOURCE);
 

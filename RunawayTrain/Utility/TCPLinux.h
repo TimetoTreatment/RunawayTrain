@@ -38,20 +38,14 @@ public:
 
 	WaitEventType WaitEvent(int timeoutMicroSecond = -1);
 
-	void Send(std::string message, SendTo sendTo = SendTo::EVENT_SOURCE);
+	void Send(const char* message, int size, SendTo sendTo = SendTo::EVENT_SOURCE);
 
-	std::string ReadMessage();
+	const char* ReadMessage();
+	const char* ReadBuffer(int size);
 	std::string ReadSenderID();
 
 	void AddClient();
 	void CloseClient();
-
-	void SetBufferSize(int size)
-	{
-		buffer = new char[size];
-		bufferSize = size;
-	}
-
 
 
 private:
@@ -65,7 +59,8 @@ private:
 	std::vector<pollfd> fdArray;
 	size_t fdArrayCurrentIndex = 0;
 
+	char* cache = nullptr;
 	char* buffer = nullptr;
-	int bufferSize = 1024;
+	int cacheSize = 8192;
+	int bufferSize = 8388608;
 };
-

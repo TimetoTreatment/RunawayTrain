@@ -97,10 +97,10 @@ TCP::~TCP()
 
 	delete cache;
 }
-
-TCP::WaitEventType TCP::WaitEvent(int timeoutMicroSecond)
+int currentReceived = 0;
+TCP::WaitEventType TCP::WaitEvent(int timeoutMilliseconds)
 {
-	if (WSAPoll(fdArray.data(), (ULONG)fdArray.size(), timeoutMicroSecond) == 0)
+	if (WSAPoll(fdArray.data(), (ULONG)fdArray.size(), timeoutMilliseconds) == 0)
 		return WaitEventType::NONE;
 
 	size_t prevPos = fdArrayCurrentIndex;
@@ -118,7 +118,7 @@ TCP::WaitEventType TCP::WaitEvent(int timeoutMicroSecond)
 			else
 			{
 				memset(cache, 0, cacheSize);
-				recv(pollfd.fd, cache, cacheSize, 0);
+				currentReceived = recv(pollfd.fd, cache, cacheSize, 0);
 
 				if (cache[0] == '\\')
 					return WaitEventType::NONE;
@@ -171,13 +171,13 @@ void TCP::Send(const char* message, int size, SendTo sendTo)
 		{
 		case SendTo::EVENT_SOURCE:
 
-			send(sender, message, cacheSize, 0);
+			send(sender, message, size, 0);
 			break;
 
 		case SendTo::ALL:
 
 			for (size_t i = 0; i < fdArray.size(); i++)
-				send(fdArray[i].fd, message, cacheSize, 0);
+				send(fdArray[i].fd, message, size, 0);
 			break;
 
 		case SendTo::OTHERS:
@@ -185,7 +185,7 @@ void TCP::Send(const char* message, int size, SendTo sendTo)
 			for (size_t i = 0; i < fdArray.size(); i++)
 			{
 				if (fdArray[i].fd != sender)
-					send(fdArray[i].fd, message, cacheSize, 0);
+					send(fdArray[i].fd, message, size, 0);
 			}
 			break;
 		}
@@ -251,20 +251,33 @@ const char* TCP::ReadBuffer(int size)
 	int remainder = size % cacheSize;
 	int pos = 0;
 
-	memcpy(buffer, cache, cacheSize);
-
-	for (int count = 1; count < iterCount; count++)
+	memcpy(buffer, cache, currentReceived);
+	pos += currentReceived;
+	for (;;)
 	{
-		pos = count * cacheSize;
-		recv(fdArray[fdArrayCurrentIndex].fd, cache, cacheSize, 0);
-		memcpy(buffer + pos, cache, cacheSize);
+		int iResult = recv(fdArray[fdArrayCurrentIndex].fd, cache, cacheSize, 0);
+
+		if (iResult > 0)
+		{
+			memcpy(buffer + pos, cache, iResult);
+
+			pos += iResult;
+
+			if (pos >= size)
+				break;
+		}
+
+		else if (iResult == 0)
+			break;
+
 	}
 
 	if (remainder != 0)
 	{
 		pos = iterCount * cacheSize;
-		recv(fdArray[fdArrayCurrentIndex].fd, cache, remainder, 0);
-		memcpy(buffer + pos, cache, cacheSize);
+		int result = recv(fdArray[fdArrayCurrentIndex].fd, cache, remainder, 0);
+		memcpy(buffer + pos, cache, remainder);
+
 	}
 
 	return buffer;
