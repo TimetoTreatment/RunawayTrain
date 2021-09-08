@@ -42,12 +42,14 @@ public:
 	void AddClient();
 	void CloseClient();
 
+	bool ReceivedCheck();
+
 
 private:
 
 	bool isServer;
 
-	SOCKET mySocket;
+	SOCKET mySocket = INVALID_SOCKET;
 	addrinfo mySocketHint;
 	SOCKET sender = INVALID_SOCKET;
 
@@ -56,8 +58,10 @@ private:
 
 	char* cache = nullptr;
 	char* buffer = nullptr;
-	int cacheSize = 8192;
+	int cacheSize = 4096;
 	int bufferSize = 8388608;
+
+	char handShake[9];
 
 	WSADATA wsaData;
 };

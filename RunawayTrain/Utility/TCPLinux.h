@@ -3,8 +3,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h> 
 #include <poll.h>
@@ -61,6 +59,7 @@ private:
 
 	char* cache = nullptr;
 	char* buffer = nullptr;
-	int cacheSize = 8192;
+	int cacheSize = 4096;
 	int bufferSize = 8388608;
+	int receivedSize = 0;
 };

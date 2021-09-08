@@ -23,8 +23,8 @@ int main()
 
 	VideoCapture cap(0);
 
-	cap.set(CAP_PROP_FRAME_HEIGHT, 1080);
-	cap.set(CAP_PROP_FRAME_WIDTH, 1920);
+	cap.set(CAP_PROP_FRAME_HEIGHT, 640);
+	cap.set(CAP_PROP_FRAME_WIDTH, 360);
 
 	for (;;)
 	{
@@ -40,7 +40,6 @@ int main()
 		int size = img.total() * img.channels();
 
 		tcp->Send("START", 6);
-
 		tcp->Send((const char*)img.data, size);
 
 		for (;;)

@@ -142,7 +142,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Utility\TCP.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="RunawayTrainServer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Utility\TCP.h" />
+    <ClInclude Include="Keyboard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -75,20 +75,22 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
+    <ClCompile Include="..\Utility\TCPLinux.cpp" />
     <ClCompile Include="RunawayTrainClient.cpp" />
     <ClCompile Include="MotorManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Utility\TCPLinux.h" />
     <ClInclude Include="MotorManager.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Link>
-      <AdditionalOptions>`pkg-config --cflags --libs opencv4` -lpthread %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>`pkg-config --cflags --libs opencv4` -lwiringPi -lpthread </AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <Link>
-      <AdditionalOptions>`pkg-config --cflags --libs opencv4` %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>`pkg-config --cflags --libs opencv4` -lwiringPi -lpthread </AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

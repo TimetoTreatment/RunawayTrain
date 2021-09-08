@@ -44,8 +44,20 @@ int main()
 		int size = img.total() * img.channels();
 
 		tcp->Send("START", 6);
-		tcp->Send("6220800", 8);
+		for (;;)
+		{
+			tcp->WaitEvent(0);
+			if (((string)tcp->ReadBuffer(3)) == "GO")
+				break;
+		}
 		tcp->Send((const char*)img.data, size);
+
+		for (;;)
+		{
+			tcp->WaitEvent(0);
+			if (((string)tcp->ReadBuffer(6)) == "READY")
+				break;
+		}
 
 		waitKey(1);
 	}

@@ -82,6 +82,7 @@ TCP::TCP(std::string port, std::string targetAddress)
 	fdArray.emplace_back(WSAPOLLFD{ mySocket, POLLRDNORM, 0 });
 }
 
+
 TCP::~TCP()
 {
 	shutdown(mySocket, SD_BOTH);
@@ -97,7 +98,29 @@ TCP::~TCP()
 
 	delete cache;
 }
-int currentReceived = 0;
+
+
+void TCP::AddClient()
+{
+	sender = accept(mySocket, nullptr, nullptr);
+	fdArray.emplace_back(WSAPOLLFD{ sender, POLLRDNORM , 0 });
+}
+
+
+void TCP::CloseClient()
+{
+	WSAPOLLFD& pollfd = fdArray[fdArrayCurrentIndex];
+
+	shutdown(pollfd.fd, SD_BOTH);
+	closesocket(pollfd.fd);
+
+	fdArray.erase(fdArray.begin() + fdArrayCurrentIndex);
+
+	if (fdArrayCurrentIndex >= fdArray.size())
+		fdArrayCurrentIndex = 0;
+}
+
+
 TCP::WaitEventType TCP::WaitEvent(int timeoutMilliseconds)
 {
 	if (WSAPoll(fdArray.data(), (ULONG)fdArray.size(), timeoutMilliseconds) == 0)
@@ -116,15 +139,7 @@ TCP::WaitEventType TCP::WaitEvent(int timeoutMilliseconds)
 			if (isServer && pollfd.fd == mySocket)
 				return WaitEventType::NEWCLIENT;
 			else
-			{
-				memset(cache, 0, cacheSize);
-				currentReceived = recv(pollfd.fd, cache, cacheSize, 0);
-
-				if (cache[0] == '\\')
-					return WaitEventType::NONE;
-
 				return WaitEventType::MESSAGE;
-			}
 		}
 		else if (pollfd.revents & POLLHUP)
 		{
@@ -143,141 +158,87 @@ TCP::WaitEventType TCP::WaitEvent(int timeoutMilliseconds)
 	return WaitEventType::NONE;
 }
 
-void TCP::AddClient()
-{
-	sender = accept(mySocket, nullptr, nullptr);
-	fdArray.emplace_back(WSAPOLLFD{ sender, POLLRDNORM , 0 });
-}
-
-void TCP::CloseClient()
-{
-	WSAPOLLFD& pollfd = fdArray[fdArrayCurrentIndex];
-
-	shutdown(pollfd.fd, SD_BOTH);
-	closesocket(pollfd.fd);
-
-	fdArray.erase(fdArray.begin() + fdArrayCurrentIndex);
-
-	if (fdArrayCurrentIndex >= fdArray.size())
-		fdArrayCurrentIndex = 0;
-}
-
 
 void TCP::Send(const char* message, int size, SendTo sendTo)
 {
-	if (size < cacheSize)
+	auto SendAll = [&](SOCKET sendTo)
 	{
-		switch (sendTo)
+		int sendSize = 0;
+
+		for (;;)
 		{
-		case SendTo::EVENT_SOURCE:
+			int iResult;
 
-			send(sender, message, size, 0);
-			break;
+			if (sendSize + cacheSize <= size)
+				iResult = send(sendTo, message + sendSize, cacheSize, 0);
+			else
+				iResult = send(sendTo, message + sendSize, size - sendSize, 0);
 
-		case SendTo::ALL:
+			if (iResult == -1)
+				std::cout << "send error\n";//DEBUG
 
-			for (size_t i = 0; i < fdArray.size(); i++)
-				send(fdArray[i].fd, message, size, 0);
-			break;
+			if (iResult != cacheSize && iResult != size - sendSize)
+				std::cout << "iResult != cacheSize\n";//DEBUG
 
-		case SendTo::OTHERS:
+			sendSize += iResult;
 
-			for (size_t i = 0; i < fdArray.size(); i++)
-			{
-				if (fdArray[i].fd != sender)
-					send(fdArray[i].fd, message, size, 0);
-			}
-			break;
+			if (sendSize >= size)
+				break;
 		}
 
-		return;
-	}
-
-	auto RecvAll = [&]()
-	{
-		int iterCount = size / cacheSize;
-		int remainder = size % cacheSize;
-		int pos = 0;
-
-		for (int count = 0; count < iterCount; count++)
-		{
-			pos = count * cacheSize;
-			memcpy(cache, message + pos, cacheSize);
-			send(sender, cache, cacheSize, 0);
-		}
-
-		if (remainder != 0)
-		{
-			pos = iterCount * cacheSize;
-			memcpy(cache, message + pos, remainder);
-			send(sender, cache, remainder, 0);
-		}
+		if (sendSize != size)
+			std::cout << sendSize << "\n";//DEBUG
 	};
 
 	switch (sendTo)
 	{
 	case SendTo::EVENT_SOURCE:
-		RecvAll();
+		SendAll(sender);
 		break;
 
 	case SendTo::ALL:
-
 		for (size_t i = 0; i < fdArray.size(); i++)
-			RecvAll();
+			SendAll(fdArray[i].fd);
 		break;
 
 	case SendTo::OTHERS:
-
 		for (size_t i = 0; i < fdArray.size(); i++)
 		{
 			if (fdArray[i].fd != sender)
-				RecvAll();
+				SendAll(fdArray[i].fd);
 		}
 		break;
 	}
 }
 
-const char* TCP::ReadMessage()
-{
-	return cache;
-}
 
 const char* TCP::ReadBuffer(int size)
 {
-	if (size <= cacheSize)
-		return cache;
+	int receivedSize = 0;
 
-	int iterCount = size / cacheSize;
-	int remainder = size % cacheSize;
-	int pos = 0;
-
-	memcpy(buffer, cache, currentReceived);
-	pos += currentReceived;
 	for (;;)
 	{
 		int iResult = recv(fdArray[fdArrayCurrentIndex].fd, cache, cacheSize, 0);
 
 		if (iResult > 0)
 		{
-			memcpy(buffer + pos, cache, iResult);
+			if (receivedSize + iResult <= size)
+			{
+				memcpy(buffer + receivedSize, cache, iResult);
+				receivedSize += iResult;
 
-			pos += iResult;
-
-			if (pos >= size)
+				if (receivedSize >= size)
+					break;
+			}
+			else
+			{
+				memcpy(buffer + receivedSize, cache, (size_t)size - receivedSize);
+				receivedSize += size - receivedSize;
 				break;
+			}
 		}
-
-		else if (iResult == 0)
+		else if (iResult == 0 && receivedSize >= size)
 			break;
-
-	}
-
-	if (remainder != 0)
-	{
-		pos = iterCount * cacheSize;
-		int result = recv(fdArray[fdArrayCurrentIndex].fd, cache, remainder, 0);
-		memcpy(buffer + pos, cache, remainder);
-
 	}
 
 	return buffer;

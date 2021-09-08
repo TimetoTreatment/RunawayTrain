@@ -27,11 +27,11 @@ int main()
 
 		case TCP::WaitEventType::MESSAGE:
 
-			if (string(tcp->ReadMessage()).find("START") != string::npos)
+			if (string(tcp->ReadBuffer(6)) == "START")
 			{
+				tcp->Send("GO", 3);
 
-
-				Mat image(Size(1920, 1080), CV_8UC3, (char*)tcp->ReadBuffer(6220800));
+				Mat image(Size(1920, 1080), CV_8UC3, (char*)tcp->ReadBuffer(1920 * 1080 * 3));
 
 
 				imshow("mat", image);

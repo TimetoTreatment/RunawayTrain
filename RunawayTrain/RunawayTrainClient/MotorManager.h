@@ -57,12 +57,12 @@ public:
 	*/
 
 	/* 속도 조절 */
-	void SpeedSteer(int percentage)
+	void SpeedDrive(int percentage)
 	{
 		softPwmWrite(pinDrivePwm, percentage);
 	}
 
-	void SpeedDrive(int percentage)
+	void SpeedSteer(int percentage)
 	{
 		softPwmWrite(pinSteerPwm, percentage);
 	}
@@ -84,9 +84,11 @@ public:
 
 		digitalWrite(pinSteer0, LOW);
 		digitalWrite(pinSteer1, LOW);
+		softPwmWrite(pinSteerPwm, 0);
 
 		digitalWrite(pinDrive0, LOW);
 		digitalWrite(pinDrive1, LOW);
+		softPwmWrite(pinDrivePwm, 0);
 	}
 
 
