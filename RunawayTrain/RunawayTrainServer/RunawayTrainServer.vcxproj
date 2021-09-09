@@ -119,10 +119,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\dependency\opencv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\dependency\opencv\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>C:\dependency\opencv\lib\opencv_world453d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,14 +149,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Utility\Console.cpp" />
+    <ClCompile Include="..\Utility\Keyboard.cpp" />
     <ClCompile Include="..\Utility\TCP.cpp" />
-    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="RunawayTrainServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Utility\Console.h" />
+    <ClInclude Include="..\Utility\Keyboard.h" />
     <ClInclude Include="..\Utility\TCP.h" />
-    <ClInclude Include="Keyboard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

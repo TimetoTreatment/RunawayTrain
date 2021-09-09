@@ -2,13 +2,13 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="RunawayTrainServer.cpp" />
-    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="..\Utility\TCP.cpp" />
     <ClCompile Include="..\Utility\Console.cpp" />
+    <ClCompile Include="..\Utility\Keyboard.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Keyboard.h" />
     <ClInclude Include="..\Utility\TCP.h" />
     <ClInclude Include="..\Utility\Console.h" />
+    <ClInclude Include="..\Utility\Keyboard.h" />
   </ItemGroup>
 </Project>

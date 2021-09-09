@@ -1,40 +1,42 @@
 #include <iostream>
+#include <vector>
+#include <opencv2/opencv.hpp>
 #include <string>
 #include <thread>
-#include <map>
-#include <thread>
-#include <opencv2/opencv.hpp>
 #include "../Utility/TCP.h"
-#include "Keyboard.h"
+#include "../Utility/Console.h"
+#include "../Utility/Keyboard.h"
 
-using namespace std;
-using namespace chrono_literals;
 using namespace cv;
+using namespace std::chrono_literals;
 
 
 int main()
 {
+	TCP* networkCamera = new TCP("9510");
+	Console* console = Console::Instance();
 	Keyboard key;
-	TCP* network = new TCP("9510");
+
 	std::vector<uchar> imageEncoded;
 	int size = 0;
+	std::string message;
 
 	for (bool exit = false; !exit;)
 	{
-		bool imageReceived = false;
-
-		switch (network->WaitEvent(0))
+		switch (networkCamera->WaitEvent(0))
 		{
 		case TCP::WaitEventType::NEWCLIENT:
-			network->AddClient();
+			networkCamera->AddClient();
 
 			break;
 
 		case TCP::WaitEventType::MESSAGE:
 
-			if (network->ReadMsg() == "START")
+			message = networkCamera->ReadMsg();
+
+			if (message == "START")
 			{
-				std::string str = network->ReadMsg();
+				std::string str = networkCamera->ReadMsg();
 
 				size = 0;
 
@@ -52,57 +54,84 @@ int main()
 				if (exit == true)
 					break;
 
-				const char* data = network->ReadData(size);
+				const char* data = networkCamera->ReadData(size);
 
 				imageEncoded.assign(data, data + size);
 
 				Mat image = imdecode(imageEncoded, ImreadModes::IMREAD_COLOR);
-				Mat imageResize;
 
-				resize(image, imageResize, Size(1920, 1080));
+				imshow("Cam", image);
 
-				imshow("mat", imageResize);
-
-				imageReceived = true;
+				//Mat imageResize;
+				//resize(image, imageResize, Size(1920, 1080));
+				//imshow("Cam", imageResize);
 			}
-			cout << "image Received: " << imageReceived << '\n';
+
 			break;
 
 		case TCP::WaitEventType::DISCONNECT:
-			network->CloseClient();
+			networkCamera->CloseClient();
 			break;
 
 		}
 
-
-		
-
+		static bool left = false;
+		static bool right = false;
+		static bool prevLeft = false;
+		static bool prevRight = false;
 
 		if (waitKey(1) == 'q')
 			break;
 
-		std::cout << size << "\n";
+		//if (key.LeftPressed())
+		//{
+		//	input += "Left, ";
+		//}
+
+		//if (key.RightPressed())
+		//	input += "Right, ";
+
+		//if (key.UpPressed())
+		//	input += "Up, ";
+
+		//if (key.DownPressed())
+		//	input += "Down, ";
 
 		if (key.LeftPressed())
-			cout << "L";
+			left = true;
+		else
+			left = false;
 
 		if (key.RightPressed())
-			cout << "R";
+			right = true;
+		else
+			right = false;
 
-		if (key.UpPressed())
+		if (left != prevLeft)
 		{
-			network->Send("UP", 5);
-
-
-
+			if (left == true)
+				networkCamera->SendMsg("LEFT_ON");
+			else
+				networkCamera->SendMsg("LEFT_OFF");
 		}
 
-		if (key.DownPressed())
-			cout << "S";
+		if (right != prevRight)
+		{
+			if (right == true)
+				networkCamera->SendMsg("RIGHT_ON");
+			else
+				networkCamera->SendMsg("RIGHT_OFF");
+		}
+		
+		prevLeft = left;
+		prevRight = right;
+
+		static int frame = 0;
+
+		frame++;
 	}
 
-
-	delete network;
+	delete networkCamera;
 
 	return 0;
 }

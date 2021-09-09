@@ -42,8 +42,6 @@ public:
 	std::string ReadMsg();
 	std::string ReadSenderID();
 
-	void Synchronize(int timeoutMilliseconds = -1);
-
 
 private:
 

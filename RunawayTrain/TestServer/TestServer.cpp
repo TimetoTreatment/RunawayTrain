@@ -5,6 +5,7 @@
 #include <thread>
 #include "../Utility/TCP.h"
 #include "../Utility/Console.h"
+#include "../Utility/Keyboard.h"
 
 using namespace cv;
 using namespace std::chrono_literals;
@@ -12,28 +13,32 @@ using namespace std::chrono_literals;
 
 int main()
 {
-	TCP* tcp = new TCP("9510");
+	TCP* networkCamera = new TCP("9510");
 	Console* console = Console::Instance();
+	Keyboard key;
 
 	std::vector<uchar> imageEncoded;
 	int size = 0;
+	std::string message;
 
 	for (bool exit = false; !exit;)
 	{
-		switch (tcp->WaitEvent(0))
+		switch (networkCamera->WaitEvent(0))
 		{
 		case TCP::WaitEventType::NEWCLIENT:
-			tcp->AddClient();
+			networkCamera->AddClient();
 
 			break;
 
 		case TCP::WaitEventType::MESSAGE:
 
-			if (tcp->ReadMsg() == "START")
-			{
-				tcp->Synchronize();
+			message = networkCamera->ReadMsg();
 
-				std::string str = tcp->ReadMsg();
+			if (message == "START")
+			{
+
+
+				std::string str = networkCamera->ReadMsg();
 
 				size = 0;
 
@@ -51,7 +56,7 @@ int main()
 				if (exit == true)
 					break;
 
-				const char* data = tcp->ReadData(size);
+				const char* data = networkCamera->ReadData(size);
 
 				imageEncoded.assign(data, data + size);
 
@@ -67,21 +72,46 @@ int main()
 			break;
 
 		case TCP::WaitEventType::DISCONNECT:
-			tcp->CloseClient();
+			networkCamera->CloseClient();
 			break;
 
 		}
 
+		std::string input = "";
+
 		if (waitKey(1) == 'q')
 			break;
 
+		if (key.LeftPressed())
+		{
+			input += "Left, ";
+		}
+
+		if (key.RightPressed())
+			input += "Right, ";
+
+		if (key.UpPressed())
+			input += "Up, ";
+
+		if (key.DownPressed())
+			input += "Down, ";
+
+
+
+		if (!input.empty())
+		{
+			networkCamera->SendMsg("KEYBOARD");
+
+
+			networkCamera->SendMsg(input);
+		}
+
 		static int frame = 0;
-		console->Draw("* Revceived Data Size : " + std::to_string(size), 4, 2);
-		console->Draw("* Total Frame : " + std::to_string(frame), 4, 3);
+
 		frame++;
 	}
 
-	delete tcp;
+	delete networkCamera;
 
 	return 0;
 }

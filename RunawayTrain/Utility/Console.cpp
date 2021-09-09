@@ -79,7 +79,7 @@ void Console::Draw(std::string strOrFile, int startX, int startY, Color color)
 		std::string line;
 		std::fstream file(strOrFile, std::ios_base::in);	// 텍스트 파일 읽기
 
-		SetColor(color);
+		// SetColor(color);
 
 		for (; !file.eof(); startY++)	// 색상 변경, 파일의 끝까지, y좌표 업데이트
 		{
@@ -97,7 +97,7 @@ void Console::Draw(std::string strOrFile, int startX, int startY, Color color)
 		size_t pos = 0;
 		size_t prePos = 0;
 
-		Color(color);
+		// SetColor(color);
 
 		for (int count = 0; pos < strOrFile.size(); count++)				// 행만큼 반복
 		{
