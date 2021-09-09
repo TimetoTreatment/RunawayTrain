@@ -4,9 +4,11 @@
     <ClCompile Include="TestServer.cpp" />
     <ClCompile Include="..\Utility\TCP.cpp" />
     <ClCompile Include="..\Utility\Timer.cpp" />
+    <ClCompile Include="..\Utility\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Utility\TCP.h" />
     <ClInclude Include="..\Utility\Timer.h" />
+    <ClInclude Include="..\Utility\Console.h" />
   </ItemGroup>
 </Project>

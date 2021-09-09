@@ -5,6 +5,7 @@
 #include <thread>
 #include "../Utility/TCPLinux.h"
 #include <unistd.h>
+#include "opencv2/core/ocl.hpp"
 
 using namespace std;
 using namespace cv;
@@ -12,7 +13,7 @@ using namespace cv;
 
 int main()
 {
-	int value = 75;
+	int value = 70;
 
 	thread cinIntThread([&]() {
 		for (;;)
@@ -25,8 +26,6 @@ int main()
 
 	cap.set(CAP_PROP_FRAME_WIDTH, 1280);
 	cap.set(CAP_PROP_FRAME_HEIGHT, 720);
-	cap.set(CAP_PROP_AUTO_WB, 0);
-	cap.set(CAP_PROP_AUTO_EXPOSURE, 0);
 
 	for (;;)
 	{
@@ -64,7 +63,7 @@ int main()
 
 			if (w == TCP::WaitEventType::MESSAGE)
 			{
-				string str = tcp->ReadMessage();
+				string str = tcp->ReadMsg();
 
 				if (str == "READY")
 					break;

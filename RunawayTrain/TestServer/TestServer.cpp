@@ -4,8 +4,8 @@
 #include <string>
 #include <thread>
 #include "../Utility/TCP.h"
+#include "../Utility/Console.h"
 
-using namespace std;
 using namespace cv;
 using namespace std::chrono_literals;
 
@@ -13,8 +13,9 @@ using namespace std::chrono_literals;
 int main()
 {
 	TCP* tcp = new TCP("9510");
+	Console* console = Console::Instance();
 
-	vector<uchar> imageEncoded;
+	std::vector<uchar> imageEncoded;
 	int size = 0;
 
 	for (bool exit = false; !exit;)
@@ -28,11 +29,11 @@ int main()
 
 		case TCP::WaitEventType::MESSAGE:
 
-			if (tcp->ReadMessage() == "START")
+			if (tcp->ReadMsg() == "START")
 			{
-				tcp->Send("READY", 6);
+				tcp->Synchronize();
 
-				string str = tcp->ReadMessage();
+				std::string str = tcp->ReadMsg();
 
 				size = 0;
 
@@ -56,7 +57,11 @@ int main()
 
 				Mat image = imdecode(imageEncoded, ImreadModes::IMREAD_COLOR);
 
-				imshow("mat", image);
+				imshow("Cam", image);
+
+				//Mat imageResize;
+				//resize(image, imageResize, Size(1920, 1080));
+				//imshow("Cam", imageResize);
 			}
 
 			break;
@@ -70,7 +75,10 @@ int main()
 		if (waitKey(1) == 'q')
 			break;
 
-		cout << size << "\n";
+		static int frame = 0;
+		console->Draw("* Revceived Data Size : " + std::to_string(size), 4, 2);
+		console->Draw("* Total Frame : " + std::to_string(frame), 4, 3);
+		frame++;
 	}
 
 	delete tcp;

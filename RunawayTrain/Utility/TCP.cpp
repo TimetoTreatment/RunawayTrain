@@ -161,6 +161,50 @@ TCP::WaitEventType TCP::WaitEvent(int timeoutMilliseconds)
 }
 
 
+void TCP::SendMsg(std::string message, SendTo sendTo)
+{
+	auto SendStream = [&](SOCKET sendTo)
+	{
+		int size = message.size() + 1;
+		int sendSize = 0;
+		int iResult;
+
+		for (; sendSize < size;)
+		{
+			if (sendSize + cacheSize <= size)
+				iResult = send(sendTo, message.c_str() + sendSize, cacheSize, 0);
+			else
+				iResult = send(sendTo, message.c_str() + sendSize, size - sendSize, 0);
+
+			if (iResult == -1)
+				std::cerr << "[ERROR] TCP::SendMsg()" << std::endl;
+
+			sendSize += iResult;
+		}
+	};
+
+	switch (sendTo)
+	{
+	case SendTo::EVENT_SOURCE:
+		SendStream(sender);
+		break;
+
+	case SendTo::ALL:
+		for (size_t i = 0; i < fdArray.size(); i++)
+			SendStream(fdArray[i].fd);
+		break;
+
+	case SendTo::OTHERS:
+		for (size_t i = 0; i < fdArray.size(); i++)
+		{
+			if (fdArray[i].fd != sender && fdArray[i].fd != mySocket)
+				SendStream(fdArray[i].fd);
+		}
+		break;
+	}
+}
+
+
 void TCP::Send(const char* message, int size, SendTo sendTo)
 {
 	auto SendStream = [&](SOCKET sendTo)
@@ -201,7 +245,7 @@ void TCP::Send(const char* message, int size, SendTo sendTo)
 }
 
 
-std::string TCP::ReadMessage()
+std::string TCP::ReadMsg()
 {
 	std::string message;
 
@@ -222,7 +266,10 @@ std::string TCP::ReadMessage()
 		bufferValidDataSize = iResult - message.size() - 1;
 
 		if (bufferValidDataSize > 0)
-			memcpy(buffer, cache + message.size() + 1, bufferValidDataSize);
+		{
+			memmove(cache, cache + message.size() + 1, bufferValidDataSize);
+			memcpy(buffer, cache, bufferValidDataSize);
+		}
 	}
 
 	return message;
@@ -269,4 +316,13 @@ const char* TCP::ReadData(int size)
 std::string TCP::ReadSenderID()
 {
 	return std::to_string(sender);
+}
+
+
+void TCP::Synchronize(int timeoutMilliseconds)
+{
+
+	SendMsg("SYNC");
+	if (ReadMsg() != "SYNC")
+		std::cerr << "[ERROR] TCP::Synchronize()" << std::endl;
 }

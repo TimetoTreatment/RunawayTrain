@@ -1,39 +1,68 @@
 #include <iostream>
+#include <vector>
+#include <opencv2/opencv.hpp>
 #include <string>
 #include <thread>
-#include <opencv2/opencv.hpp>
-
-#include "MotorManager.h"
+#include "../Utility/TCPLinux.h"
+#include <unistd.h>
+#include "opencv2/core/ocl.hpp"
 
 using namespace std;
+using namespace cv;
 
 
 int main()
 {
-	cv::VideoCapture videoCapture(0);
+	int value = 70;
 
-	
-	MotorManager* mm = new MotorManager();
+	thread cinIntThread([&]() {
+		for (;;)
+			cin >> value;
+		});
 
-	char ch;
+	TCP* tcp = new TCP("9510", "192.168.219.102");
 
-	mm->SpeedSteer(100);
-	mm->SpeedDrive(100);
+	VideoCapture cap(0);
 
+	cap.set(CAP_PROP_FRAME_WIDTH, 1280);
+	cap.set(CAP_PROP_FRAME_HEIGHT, 720);
+	int count = 0;
 	for (;;)
 	{
-		switch()
+		Mat img;
+		cap >> img;
 
+		if (img.empty())
+		{
+			cout << "img.empty()" << endl;
+			abort();
+		}
 
+		int size = img.total() * img.channels();
 
+		tcp->Send("START", 6);
 
+		if (value == -1)
+			break;
 
+		vector<uchar> imgEncoded;
 
+		imencode(".jpg", img, imgEncoded, { IMWRITE_JPEG_QUALITY, value });
 
+		string sizeStr = to_string(imgEncoded.size());
+
+		tcp->Synchronize();
+
+		tcp->Send(sizeStr.c_str(), sizeStr.size() + 1);
+		tcp->Send((const char*)imgEncoded.data(), imgEncoded.size());
+
+		waitKey(1);
+
+		cout << count << '\n';
+		count++;
 	}
 
-	delete mm;
-
+	cinIntThread.detach();
 
 	return 0;
 }
