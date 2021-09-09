@@ -13,7 +13,12 @@ int main()
 {
 	TCP* tcp = new TCP("9510", "192.168.219.102");
 
-	tcp->WaitEvent(); // ACCEPT
+	for (;;)
+	{
+		tcp->WaitEvent(0);
+		if (((string)tcp->ReadBuffer(7)) == "ACCEPT")
+			break;
+	}
 
 	int current = 1;
 	Mat img1 = imread("1.png");
@@ -44,20 +49,9 @@ int main()
 		int size = img.total() * img.channels();
 
 		tcp->Send("START", 6);
-		for (;;)
-		{
-			tcp->WaitEvent(0);
-			if (((string)tcp->ReadBuffer(3)) == "GO")
-				break;
-		}
+
 		tcp->Send((const char*)img.data, size);
 
-		for (;;)
-		{
-			tcp->WaitEvent(0);
-			if (((string)tcp->ReadBuffer(6)) == "READY")
-				break;
-		}
 
 		waitKey(1);
 	}

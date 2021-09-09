@@ -218,7 +218,12 @@ const char* TCP::ReadBuffer(int size)
 
 	for (;;)
 	{
-		int iResult = recv(fdArray[fdArrayCurrentIndex].fd, cache, cacheSize, 0);
+		int iResult;
+
+		if (size - receivedSize > cacheSize)
+			iResult = recv(fdArray[fdArrayCurrentIndex].fd, cache, cacheSize, 0);
+		else
+			iResult = recv(fdArray[fdArrayCurrentIndex].fd, cache, size - receivedSize, 0);
 
 		if (iResult > 0)
 		{

@@ -42,8 +42,6 @@ public:
 	void AddClient();
 	void CloseClient();
 
-	bool ReceivedCheck();
-
 
 private:
 

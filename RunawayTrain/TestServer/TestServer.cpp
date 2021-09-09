@@ -29,7 +29,6 @@ int main()
 
 			if (string(tcp->ReadBuffer(6)) == "START")
 			{
-				tcp->Send("GO", 3);
 
 				Mat image(Size(1920, 1080), CV_8UC3, (char*)tcp->ReadBuffer(1920 * 1080 * 3));
 
@@ -37,7 +36,7 @@ int main()
 				imshow("mat", image);
 
 				waitKey(1);
-				tcp->Send("READY", 6);
+
 			}
 
 			break;
