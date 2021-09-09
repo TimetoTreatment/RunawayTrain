@@ -12,19 +12,21 @@ using namespace cv;
 
 int main()
 {
-	TCP* tcp = new TCP("9510", "192.168.219.102");
+	int value = 75;
 
-	for (;;)
-	{
-		tcp->WaitEvent(); // ACCEPT
-		if (((string)tcp->ReadMessage()) == "ACCEPT")
-			break;
-	}
+	thread cinIntThread([&]() {
+		for (;;)
+			cin >> value;
+		});
+
+	TCP* tcp = new TCP("9510", "192.168.219.102");
 
 	VideoCapture cap(0);
 
-	cap.set(CAP_PROP_FRAME_HEIGHT, 640);
-	cap.set(CAP_PROP_FRAME_WIDTH, 360);
+	cap.set(CAP_PROP_FRAME_WIDTH, 1280);
+	cap.set(CAP_PROP_FRAME_HEIGHT, 720);
+	cap.set(CAP_PROP_AUTO_WB, 0);
+	cap.set(CAP_PROP_AUTO_EXPOSURE, 0);
 
 	for (;;)
 	{
@@ -37,20 +39,47 @@ int main()
 			abort();
 		}
 
+		if (img.empty())
+		{
+			cout << "img.empty()" << endl;
+			abort();
+		}
+
 		int size = img.total() * img.channels();
 
 		tcp->Send("START", 6);
-		tcp->Send((const char*)img.data, size);
+
+		if (value == -1)
+			break;
+
+		vector<uchar> imgEncoded;
+
+		imencode(".jpg", img, imgEncoded, { IMWRITE_JPEG_QUALITY, value });
+
+		string sizeStr = to_string(imgEncoded.size());
 
 		for (;;)
 		{
-			tcp->WaitEvent(0);
-			if (((string)tcp->ReadMessage()) == "READY")
+			TCP::WaitEventType w = tcp->WaitEvent(0);
+
+			if (w == TCP::WaitEventType::MESSAGE)
+			{
+				string str = tcp->ReadMessage();
+
+				if (str == "READY")
+					break;
+			}
+			else if (w == TCP::WaitEventType::DISCONNECT)
 				break;
 		}
 
+		tcp->Send(sizeStr.c_str(), sizeStr.size() + 1);
+		tcp->Send((const char*)imgEncoded.data(), imgEncoded.size());
+
 		waitKey(1);
 	}
+
+	cinIntThread.detach();
 
 	return 0;
 }

@@ -30,7 +30,7 @@ int main()
 
 		if (key.UpPressed())
 		{
-			network->Send("LEFT", 5);
+			network->Send("UP", 5);
 
 
 

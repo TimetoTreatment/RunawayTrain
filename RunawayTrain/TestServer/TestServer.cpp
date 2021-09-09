@@ -14,29 +14,49 @@ int main()
 {
 	TCP* tcp = new TCP("9510");
 
+	vector<uchar> imageEncoded;
 	int size = 0;
 
-	for (;;)
+	for (bool exit = false; !exit;)
 	{
 		switch (tcp->WaitEvent(0))
 		{
 		case TCP::WaitEventType::NEWCLIENT:
 			tcp->AddClient();
-			tcp->Send("ACCEPT", 7);
+
 			break;
 
 		case TCP::WaitEventType::MESSAGE:
 
-			if (string(tcp->ReadBuffer(6)) == "START")
+			if (tcp->ReadMessage() == "START")
 			{
+				tcp->Send("READY", 6);
 
-				Mat image(Size(1920, 1080), CV_8UC3, (char*)tcp->ReadBuffer(1920 * 1080 * 3));
+				string str = tcp->ReadMessage();
 
+				size = 0;
+
+				for (const char* iter = str.c_str(); *iter; iter++)
+				{
+					if ('0' <= *iter && *iter <= '9')
+					{
+						size *= 10;
+						size += *iter - '0';
+					}
+					else
+						exit = true;
+				}
+
+				if (exit == true)
+					break;
+
+				const char* data = tcp->ReadData(size);
+
+				imageEncoded.assign(data, data + size);
+
+				Mat image = imdecode(imageEncoded, ImreadModes::IMREAD_COLOR);
 
 				imshow("mat", image);
-
-				waitKey(1);
-
 			}
 
 			break;
@@ -46,8 +66,14 @@ int main()
 			break;
 
 		}
+
+		if (waitKey(1) == 'q')
+			break;
+
+		cout << size << "\n";
 	}
 
+	delete tcp;
 
 	return 0;
 }

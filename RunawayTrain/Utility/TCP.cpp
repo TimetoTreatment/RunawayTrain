@@ -55,13 +55,15 @@ TCP::TCP(std::string port, std::string targetAddress)
 		{
 			mySocket = socket(iter->ai_family, iter->ai_socktype, iter->ai_protocol);
 
-			if (mySocket == INVALID_SOCKET) {
+			if (mySocket == INVALID_SOCKET)
+			{
 				std::cerr << "TCP::socket() : " << WSAGetLastError();
 				WSACleanup();
 				abort();
 			}
 
-			if (connect(mySocket, iter->ai_addr, (int)iter->ai_addrlen) == SOCKET_ERROR) {
+			if (connect(mySocket, iter->ai_addr, (int)iter->ai_addrlen) == SOCKET_ERROR)
+			{
 				closesocket(mySocket);
 				mySocket = INVALID_SOCKET;
 			}
@@ -161,91 +163,105 @@ TCP::WaitEventType TCP::WaitEvent(int timeoutMilliseconds)
 
 void TCP::Send(const char* message, int size, SendTo sendTo)
 {
-	auto SendAll = [&](SOCKET sendTo)
+	auto SendStream = [&](SOCKET sendTo)
 	{
 		int sendSize = 0;
+		int iResult;
 
-		for (;;)
+		for (; sendSize < size;)
 		{
-			int iResult;
-
 			if (sendSize + cacheSize <= size)
 				iResult = send(sendTo, message + sendSize, cacheSize, 0);
 			else
 				iResult = send(sendTo, message + sendSize, size - sendSize, 0);
 
-			if (iResult == -1)
-				std::cout << "send error\n";//DEBUG
-
-			if (iResult != cacheSize && iResult != size - sendSize)
-				std::cout << "iResult != cacheSize\n";//DEBUG
-
 			sendSize += iResult;
-
-			if (sendSize >= size)
-				break;
 		}
-
-		if (sendSize != size)
-			std::cout << sendSize << "\n";//DEBUG
 	};
 
 	switch (sendTo)
 	{
 	case SendTo::EVENT_SOURCE:
-		SendAll(sender);
+		SendStream(sender);
 		break;
 
 	case SendTo::ALL:
 		for (size_t i = 0; i < fdArray.size(); i++)
-			SendAll(fdArray[i].fd);
+			SendStream(fdArray[i].fd);
 		break;
 
 	case SendTo::OTHERS:
 		for (size_t i = 0; i < fdArray.size(); i++)
 		{
 			if (fdArray[i].fd != sender)
-				SendAll(fdArray[i].fd);
+				SendStream(fdArray[i].fd);
 		}
 		break;
 	}
 }
 
 
-const char* TCP::ReadBuffer(int size)
+std::string TCP::ReadMessage()
 {
-	int receivedSize = 0;
+	std::string message;
 
+	if (bufferValidDataSize > 0)
+	{
+		message = std::string(buffer);
+
+		memmove(buffer, buffer + message.size() + 1, message.size() + 1);
+
+		bufferValidDataSize -= message.size() + 1;
+	}
+	else
+	{
+		int iResult = recv(fdArray[fdArrayCurrentIndex].fd, cache, cacheSize, 0);
+
+		message = std::string(cache);
+
+		bufferValidDataSize = iResult - message.size() - 1;
+
+		if (bufferValidDataSize > 0)
+			memcpy(buffer, cache + message.size() + 1, bufferValidDataSize);
+	}
+
+	return message;
+}
+
+
+const char* TCP::ReadData(int size)
+{
 	for (;;)
 	{
 		int iResult;
 
-		if (size - receivedSize > cacheSize)
+		if (size - bufferValidDataSize > cacheSize)
 			iResult = recv(fdArray[fdArrayCurrentIndex].fd, cache, cacheSize, 0);
 		else
-			iResult = recv(fdArray[fdArrayCurrentIndex].fd, cache, size - receivedSize, 0);
+			iResult = recv(fdArray[fdArrayCurrentIndex].fd, cache, size - bufferValidDataSize, 0);
 
 		if (iResult > 0)
 		{
-			if (receivedSize + iResult <= size)
+			if (bufferValidDataSize + iResult <= size)
 			{
-				memcpy(buffer + receivedSize, cache, iResult);
-				receivedSize += iResult;
+				memcpy(buffer + bufferValidDataSize, cache, iResult);
+				bufferValidDataSize += iResult;
 
-				if (receivedSize >= size)
+				if (bufferValidDataSize >= size)
 					break;
 			}
 			else
 			{
-				memcpy(buffer + receivedSize, cache, (size_t)size - receivedSize);
-				receivedSize += size - receivedSize;
+				memcpy(buffer + bufferValidDataSize, cache, (size_t)size - bufferValidDataSize);
+				bufferValidDataSize += size - bufferValidDataSize;
 				break;
 			}
 		}
-		else if (iResult == 0 && receivedSize >= size)
+		else if (iResult == 0 || bufferValidDataSize >= size)
 			break;
 	}
 
+	bufferValidDataSize = 0;
 	return buffer;
 }
 
