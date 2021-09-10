@@ -12,6 +12,7 @@ public:
 		STOP,
 		FORWARD,
 		BACKWORD,
+		CENTER,
 		LEFT,
 		RIGHT,
 	};
@@ -34,6 +35,11 @@ public:
 		case Direction::BACKWORD:
 			digitalWrite(pinDrive0, LOW);
 			digitalWrite(pinDrive1, HIGH);
+			break;
+
+		case Direction::CENTER:
+			digitalWrite(pinSteer0, LOW);
+			digitalWrite(pinSteer1, LOW);
 			break;
 
 		case Direction::LEFT:

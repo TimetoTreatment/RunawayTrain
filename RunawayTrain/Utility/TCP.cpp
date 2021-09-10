@@ -172,7 +172,7 @@ void TCP::Send(const char* message, int size, SendTo sendTo)
 	auto SendStream = [&](SOCKET sendTo)
 	{
 		int sendSize = 0;
-		int iResult;
+		int iResult = 0;
 
 		for (; sendSize < size;)
 		{
@@ -180,6 +180,9 @@ void TCP::Send(const char* message, int size, SendTo sendTo)
 				iResult = send(sendTo, message + sendSize, cacheSize, 0);
 			else
 				iResult = send(sendTo, message + sendSize, size - sendSize, 0);
+
+			if (iResult == -1)
+				break;
 
 			sendSize += iResult;
 		}

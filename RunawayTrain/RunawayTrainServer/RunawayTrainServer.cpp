@@ -13,7 +13,7 @@ using namespace std::chrono_literals;
 
 int main()
 {
-	TCP* networkCamera = new TCP("9510");
+	TCP* network = new TCP("9510");
 	Console* console = Console::Instance();
 	Keyboard key;
 
@@ -23,20 +23,20 @@ int main()
 
 	for (bool exit = false; !exit;)
 	{
-		switch (networkCamera->WaitEvent(0))
+		switch (network->WaitEvent(0))
 		{
 		case TCP::WaitEventType::NEWCLIENT:
-			networkCamera->AddClient();
+			network->AddClient();
 
 			break;
 
 		case TCP::WaitEventType::MESSAGE:
 
-			message = networkCamera->ReadMsg();
+			message = network->ReadMsg();
 
 			if (message == "START")
 			{
-				std::string str = networkCamera->ReadMsg();
+				std::string str = network->ReadMsg();
 
 				size = 0;
 
@@ -54,48 +54,47 @@ int main()
 				if (exit == true)
 					break;
 
-				const char* data = networkCamera->ReadData(size);
+				const char* data = network->ReadData(size);
 
 				imageEncoded.assign(data, data + size);
 
 				Mat image = imdecode(imageEncoded, ImreadModes::IMREAD_COLOR);
 
 				imshow("Cam", image);
-
-				//Mat imageResize;
-				//resize(image, imageResize, Size(1920, 1080));
-				//imshow("Cam", imageResize);
 			}
 
 			break;
 
 		case TCP::WaitEventType::DISCONNECT:
-			networkCamera->CloseClient();
+			network->CloseClient();
 			break;
 
 		}
 
+		static bool up = false;
+		static bool down = false;
 		static bool left = false;
 		static bool right = false;
+		static bool prevUp = false;
+		static bool prevDown = false;
 		static bool prevLeft = false;
 		static bool prevRight = false;
 
-		if (waitKey(1) == 'q')
+		if (waitKey(1) == 27)
+		{
+			network->SendMsg("EXIT");
 			break;
+		}
 
-		//if (key.LeftPressed())
-		//{
-		//	input += "Left, ";
-		//}
+		if (key.UpPressed())
+			up = true;
+		else
+			up = false;
 
-		//if (key.RightPressed())
-		//	input += "Right, ";
-
-		//if (key.UpPressed())
-		//	input += "Up, ";
-
-		//if (key.DownPressed())
-		//	input += "Down, ";
+		if (key.DownPressed())
+			down = true;
+		else
+			down = false;
 
 		if (key.LeftPressed())
 			left = true;
@@ -107,31 +106,63 @@ int main()
 		else
 			right = false;
 
+		if (up != prevUp)
+		{
+			if (up == true)
+				network->SendMsg("UP_ON");
+			else
+				network->SendMsg("UP_OFF");
+		}
+
+		if (down != prevDown)
+		{
+			if (down == true)
+				network->SendMsg("DOWN_ON");
+			else
+				network->SendMsg("DOWN_OFF");
+		}
+
 		if (left != prevLeft)
 		{
 			if (left == true)
-				networkCamera->SendMsg("LEFT_ON");
+				network->SendMsg("LEFT_ON");
 			else
-				networkCamera->SendMsg("LEFT_OFF");
+				network->SendMsg("LEFT_OFF");
 		}
 
 		if (right != prevRight)
 		{
 			if (right == true)
-				networkCamera->SendMsg("RIGHT_ON");
+				network->SendMsg("RIGHT_ON");
 			else
-				networkCamera->SendMsg("RIGHT_OFF");
+				network->SendMsg("RIGHT_OFF");
 		}
-		
+
+		prevUp = up;
+		prevDown = down;
 		prevLeft = left;
 		prevRight = right;
 
 		static int frame = 0;
+		int xStart = 85;
+		console->Clear(xStart, 36, 40, 10);
+		console->Draw("* Revceived Data Size : " + std::to_string(size), xStart, 36);
+		console->Draw("* Total Frame : " + std::to_string(frame), xStart, 38);
+		console->Draw("* Keyboard Pressed", xStart, 40);
+
+		if (up)
+			console->Draw("        U", xStart, 42);
+		if (right)
+			console->Draw("          R", xStart, 43);
+		if (left)
+			console->Draw("      L", xStart, 43);
+		if (down)
+			console->Draw("        D", xStart, 44);
 
 		frame++;
 	}
 
-	delete networkCamera;
+	delete network;
 
 	return 0;
 }
